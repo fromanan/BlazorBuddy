@@ -1,6 +1,6 @@
 ﻿<li class="tab">
     <MiniIcon Class="favicon" Url="https://www.google.com/favicon.ico"/>
-    <ClickableIcon IconClass="tab-close" Url="../images/xto.png" ClickAction="@TabCloseAction"/>
+    <ClickableIcon IconClass="tab-close" Url="../img/xto.png" ClickAction="@OnTabCloseClicked"/>
     <div>
         <a href="@Tab.Url" target="_blank" class="clickonly">@Tab.Title</a>
         <br/>
@@ -14,5 +14,10 @@
     public required Tab Tab { get; init; }
     
     [Parameter]
-    public required Action TabCloseAction { get; set; }
+    public required Action<MouseEventArgs, int> TabCloseAction { get; set; }
+
+    private void OnTabCloseClicked(MouseEventArgs args)
+    {
+        TabCloseAction(args, Tab.Id);
+    }
 }

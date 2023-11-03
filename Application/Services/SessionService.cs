@@ -12,9 +12,9 @@ public static class SessionService
 {
     private static readonly Dictionary<int, Session> _SessionTable = new();
 
-    private static int _SelectedSessionKey;
+    public static int SelectedSessionId { get; private set; }
 
-    private static Session SelectedSession => _SessionTable[_SelectedSessionKey];
+    private static Session SelectedSession => _SessionTable[SelectedSessionId];
 
     private static int _InsertRow;
     
@@ -86,9 +86,9 @@ public static class SessionService
     
     public static void UpdateSelection(int id)
     {
-        if (id == _SelectedSessionKey)
+        if (id == SelectedSessionId)
             return;
-        _SelectedSessionKey = id;
+        SelectedSessionId = id;
         SelectionChanged(id);
     }
 
@@ -118,7 +118,7 @@ public static class SessionService
                     innerBuilder.AddAttribute(6, nameof(SessionRow.LastChange), session.LastChange);
                     innerBuilder.AddAttribute(7, nameof(SessionRow.TabCount),   session.TabCount);
                     innerBuilder.AddAttribute(8, nameof(SessionRow.SessionType),       type);
-                    innerBuilder.AddAttribute(9, nameof(SessionRow.Selected), _SelectedSessionKey == session.Identifier);
+                    innerBuilder.AddAttribute(9, nameof(SessionRow.Selected), SelectedSessionId == session.Identifier);
                     innerBuilder.AddAttribute(10, nameof(SessionRow.Identifier), session.Identifier);
                     innerBuilder.CloseComponent();
                 }
@@ -174,8 +174,64 @@ public static class SessionService
     {
         Session session = CurrentSession.Copy();
         session.Title = name ?? "Unnamed session";
+        session.Created = DateTime.Now;
         AddSession(session);
         SavedSessions.Add(session);
         SessionsUpdated();
+    }
+
+    public static void CloseSession(int sessionId)
+    {
+        Console.WriteLine("Closing session!");
+    }
+
+    public static void CloseWindow(int sessionId, int windowId)
+    {
+        Console.WriteLine("Closing window!");
+    }
+
+    public static void SaveAndCloseWindow(int sessionId, int windowId)
+    {
+        Console.WriteLine("Saving & Closing window!");
+    }
+
+    public static void CloseTab(int sessionId, int windowId, int tabId)
+    {
+        Console.WriteLine("Closing tab!");
+    }
+
+    public static void RenameWindow(int sessionId, int windowId, string? newName)
+    {
+        Console.WriteLine("Renaming window!");
+    }
+
+    public static void RenameSession(int sessionId, string? newName)
+    {
+        Console.WriteLine("Renaming session!");
+    }
+
+    public static void DuplicateSession(int sessionId, string? newName)
+    {
+        Console.WriteLine("Duplicating session!");
+    }
+
+    public static void DeleteSession(int sessionId)
+    {
+        Console.WriteLine("Deleting session!");
+    }
+
+    public static void UnifyWindows(int sessionId)
+    {
+        Console.WriteLine("Unifying windows!");
+    }
+
+    public static void OverwriteSession(int sessionId, int otherSessionId = -1)
+    {
+        Console.WriteLine("Overwriting session!");
+    }
+
+    public static void SaveSession(int sessionId)
+    {
+        Console.WriteLine("Saving session!");
     }
 }

@@ -4,9 +4,13 @@ namespace Application.Models;
 
 public class Session
 {
+    public int Id { get; set; }
+    
     public string? Title { get; set; }
     
     public DateTime LastChange { get; set; }
+    
+    public DateTime? Created { get; set; }
     
     public SessionType SessionType { get; set; }
 

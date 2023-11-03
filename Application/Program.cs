@@ -1,4 +1,3 @@
-using Application.Data;
 using Application.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

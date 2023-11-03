@@ -1,56 +1,72 @@
 ﻿<ContextMenu Id="@ContextMenuId.SETTINGS">
-    <Item OnClick="@OnImportClicked">Import</Item>
-    <Item OnClick="@OnExportClicked">Export</Item>
-    <Item OnClick="@OnBackUpClicked">Back Up</Item>
+    <Item OnClick="@OnImportClicked">
+        Import
+    </Item>
+    <Item OnClick="@OnExportClicked">
+        Export
+    </Item>
+    <Item OnClick="@OnBackupClicked">
+        Back Up
+    </Item>
     <Separator/>
-    <Item OnClick="@OnSettingsClicked">Settings</Item>
-    <Item OnClick="@OnHelpClicked">Help</Item>
+    <Item OnClick="@OnSettingsClicked">
+        Settings
+    </Item>
+    <Item OnClick="@OnHelpClicked">
+        Help
+    </Item>
     <Separator/>
-    <Item OnClick="@OnRateClicked">Rate</Item>
-    <Item OnClick="@OnDonateClicked">Donate</Item>
+    <Item OnClick="@OnRateClicked">
+        Rate
+    </Item>
+    <Item OnClick="@OnDonateClicked">
+        Donate
+    </Item>
     <Separator/>
-    <Item OnClick="@OnAboutClicked">About</Item>
+    <Item OnClick="@OnAboutClicked">
+        About
+    </Item>
 </ContextMenu>
 
 @code
 {
-    private void OnImportClicked()
+    private void OnImportClicked(ItemClickEventArgs args)
     {
-        
+        FileService.Import();
     }
     
-    private void OnExportClicked()
+    private void OnExportClicked(ItemClickEventArgs args)
     {
-        
+        FileService.Export();
     }
     
-    private void OnBackUpClicked()
+    private void OnBackupClicked(ItemClickEventArgs args)
     {
-        
+        FileService.Backup();
     }
     
-    private void OnSettingsClicked()
+    private void OnSettingsClicked(ItemClickEventArgs args)
     {
-        
+        // Open Settings Dialog
     }
     
-    private void OnHelpClicked()
+    private void OnHelpClicked(ItemClickEventArgs args)
     {
-        
+        // Open Help Dialog
     }
     
     private void OnRateClicked()
     {
-        
+        // Open Rate Dialog
     }
     
     private void OnDonateClicked()
     {
-        
+        // Open Donate Page
     }
     
     private void OnAboutClicked()
     {
-        
+        // Open About Dialog
     }
 }

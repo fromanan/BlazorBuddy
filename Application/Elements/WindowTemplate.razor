@@ -1,6 +1,6 @@
 ﻿<li class="window @Window.SelectedWindowClass">
     <div>
-        <ClickableIcon IconClass="tab-close" Url="../images/xto.png" ClickAction="@WindowCloseAction"/>
+        <ClickableIcon IconClass="tab-close" Url="../img/xto.png" ClickAction="@OnWindowCloseClicked"/>
         <ButtonWithMenu Class="window-title highlight-accent" ContextMenuId="@ContextMenuId.WINDOW" Trigger="@Trigger">
             @Window.Title
         </ButtonWithMenu>
@@ -14,7 +14,7 @@
     <ul class="tab-list">
         @foreach (Tab tab in Window.Tabs)
         {
-            <TabTemplate Tab="@tab" TabCloseAction="@TabCloseAction"/>
+            <TabTemplate Tab="@tab" TabCloseAction="@OnTabCloseClicked"/>
         }
     </ul>
 </li>
@@ -25,10 +25,20 @@
     public required Window Window { get; init; }
     
     [Parameter]
-    public required Action WindowCloseAction { get; set; }
+    public required Action<MouseEventArgs, int> WindowCloseAction { get; set; }
     
     [Parameter]
-    public required Action TabCloseAction { get; set; }
+    public required Action<MouseEventArgs, int, int> TabCloseAction { get; set; }
     
     private MouseButtonTrigger Trigger => MouseButtonTrigger.Right | MouseButtonTrigger.DoubleClick;
+
+    private void OnWindowCloseClicked(MouseEventArgs args)
+    {
+        WindowCloseAction(args, Window.Id);
+    }
+    
+    private void OnTabCloseClicked(MouseEventArgs args, int tabId)
+    {
+        TabCloseAction(args, Window.Id, tabId);
+    }
 }

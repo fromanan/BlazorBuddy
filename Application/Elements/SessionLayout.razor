@@ -1,23 +1,20 @@
 ﻿<div class="session-title-bar flex-parent">
     <div class="page-title flex-child-text">
-        <a class="@TitleClassString" onclick="@OnRenameWindow">
+        <a class="@TitleClassString" @onclick="@OnRenameSession">
             <h1>@TitleString</h1>
         </a>
-    </div>
-    
-    <div class="modals" style="z-index:1010">
-        <SaveModal @ref="@_saveModal" ModalResultCallback="@OnModalSubmit"/>
     </div>
     
     <FlexSpacer/>
     
     <div class="icons">
-        <IconButton ClickAction="@OnSaveClicked" Class="save-button" Disabled="@(!IsSaveable)">
+        <IconButton ClickActionAsync="@OnSaveClicked" Class="save-button" Disabled="@(!IsSaveable)">
             Save
         </IconButton>
         <IconButtonWithMenu ContextMenuId="@ContextMenuId.OPEN" Class="open-button" Disabled="@(!IsOpenable)">
             Open
         </IconButtonWithMenu>
+        @* TODO: Disable for Type=Current *@
         <IconButtonWithMenu ContextMenuId="@ContextMenuId.OPTIONS" IconOnly="@true" Class="options-button">
             Options
         </IconButtonWithMenu>
@@ -28,14 +25,17 @@
 
 <div class="session-subtitle-bar flex-parent">
     <div class="session-subtitle flex-child-text">
-        Changed @TimeString<Spacer/>
-        <span class="text-secondary">@Utils.GetTimeString(LastChange) ago</span>
+        Changed @TimeString
+        <Spacer/>
+        <span class="text-secondary">
+            @Utils.GetTimeString(LastChange) ago
+        </span>
     </div>
     <FlexSpacer/>
     <div class="session-counts">
-        @WindowCount Windows
+        @Utils.Pluralize(WindowCount, "Window")
         <Spacer Width="0.25f"/>
-        @TabCount Tabs
+        @Utils.Pluralize(TabCount, "Tab")
     </div>
 </div>
 
@@ -78,8 +78,6 @@
     
     [Parameter]
     public SessionType SessionType { get; set; }
-
-    private SaveModal _saveModal = null!;
     
     private string TitleClassString => IsRenameable ? "clickonly" : "nostyle";
     
@@ -97,39 +95,60 @@
     private bool IsSaveable => SessionType is not SessionType.Saved;
     
     private bool IsOpenable => SessionType is not SessionType.Current;
+
+    private int SessionId => SessionService.SelectedSessionId;
     
     protected override void OnInitialized()
     {
-        if (Windows is { Count: > 0 })
+        if (SessionType is SessionType.Current && Windows is { Count: > 0 })
+        {
             Windows[0].IsCurrentWindow = true;
+            Windows[0].Title = "Current Window";
+        }
     }
     
-    private void OnCloseWindow()
+    private void OnCloseWindow(MouseEventArgs args, int windowId)
     {
-        Console.WriteLine("Closing window!");
+        SessionService.CloseWindow(SessionId, windowId);
     }
 
-    private void OnCloseTab()
+    private void OnCloseTab(MouseEventArgs args, int windowId, int tabId)
     {
-        Console.WriteLine("Closing tab!");
+        SessionService.CloseTab(SessionId, windowId, tabId);
     }
 
-    private void OnRenameWindow()
+    private async Task OnRenameSession(MouseEventArgs args)
     {
-        Console.WriteLine("Renaming window!");   
+        await DialogService.ShowDialogAsync(DialogId.Rename);
     }
 
-    private void OnSaveClicked()
+    private async Task OnSaveClicked(MouseEventArgs args)
     {
-        _saveModal.OpenModal();
+        if (await DialogService.ShowDialogAsync(DialogId.Save))
+        {
+            SessionService.SaveSession(-1);
+        }
     }
 
     private void OnModalSubmit(bool success, object? result)
     {
-        if (success && result is SaveModal.SaveSessionResult saveSessionResult)
+        if (!success)
+            return;
+        
+        switch (result)
         {
-            SessionService.SaveCurrentSession(saveSessionResult.Name);
-            InvokeAsync(StateHasChanged);
+            case SaveModal.SaveSessionResult saveSessionResult:
+            {
+                SessionService.SaveCurrentSession(saveSessionResult.Name);
+                InvokeAsync(StateHasChanged);
+                return;
+            }
+            case RenameDialog.NameSessionResult nameSessionResult:
+            {
+                SessionService.RenameSession(SessionId, nameSessionResult.Name);
+                InvokeAsync(StateHasChanged);
+                return;
+            }
         }
     }
 }

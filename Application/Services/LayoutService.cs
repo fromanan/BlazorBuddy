@@ -37,9 +37,7 @@ public static class LayoutService
         SortOrderChanged(sortOrder);
     }
 
-    private static Overlay? _overlay;
-    
-    public static event Action OverlayChanged = delegate {  };
+    private static Overlay? _Overlay;
 
     public static RenderFragment RenderOverlay()
     {
@@ -51,7 +49,7 @@ public static class LayoutService
             builder.AddAttribute(1, nameof(Overlay.Id),  "overlay");
             builder.AddComponentReferenceCapture(2, overlay =>
             {
-                _overlay = (Overlay)overlay;
+                _Overlay = (Overlay)overlay;
             });
             builder.CloseComponent();
         }
@@ -59,13 +57,16 @@ public static class LayoutService
 
     public static void ShowOverlay()
     {
-        _overlay?.Show();
-        OverlayChanged();
+        _Overlay?.Show();
     }
 
     public static void HideOverlay()
     {
-        _overlay?.Hide();
-        OverlayChanged();
+        _Overlay?.Hide();
+    }
+
+    public static void FocusWindow(int windowId)
+    {
+        
     }
 }

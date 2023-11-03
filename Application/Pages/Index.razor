@@ -8,10 +8,19 @@
 {
     protected override void OnInitialized()
     {
-        SessionService.SelectionChanged += _ => InvokeAsync(StateHasChanged);
-        SessionService.SessionsUpdated += () => InvokeAsync(StateHasChanged);
-        LayoutService.LayoutStyleChanged += _ => InvokeAsync(StateHasChanged);
-        LayoutService.SortOrderChanged += _ => InvokeAsync(StateHasChanged);
-        LayoutService.OverlayChanged += () => InvokeAsync(StateHasChanged);
+        SessionService.SelectionChanged     += UpdateView;
+        SessionService.SessionsUpdated      += UpdateView;
+        LayoutService.LayoutStyleChanged    += UpdateView;
+        LayoutService.SortOrderChanged      += UpdateView;
+    }
+
+    private async void UpdateView()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void UpdateView<T>(T obj)
+    {
+        await InvokeAsync(StateHasChanged);
     }
 }

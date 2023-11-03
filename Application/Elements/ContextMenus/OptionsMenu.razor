@@ -1,48 +1,68 @@
 ﻿<ContextMenu Id="@ContextMenuId.OPTIONS">
-    <Item OnClick="@OnRenameSession">Rename</Item>
-    <Item OnClick="@OnDuplicateSession">Duplicate</Item>
-    <Item OnClick="@OnDeleteSession">Delete</Item>
+    @* TODO: Disable for Type=Previous *@
+    <Item OnClick="@OnRenameSession">
+        Rename
+    </Item>
+    @* TODO: Disable for Type=Previous *@
+    <Item OnClick="@OnDuplicateSession">
+        Duplicate
+    </Item>
+    <Item OnClick="@OnDeleteSession">
+        Delete
+    </Item>
     <Separator/>
-    <Item OnClick="@OnSortByTitle">Sort by title</Item>
-    <Item OnClick="@OnSortByUrl">Sort by URL</Item>
-    <Item OnClick="@OnUnifyWindows">Unify windows</Item>
-    <Item OnClick="@OnOverwriteSession">Overwrite with current</Item>
+    <Item OnClick="@OnSortByTitle">
+        Sort by title
+    </Item>
+    <Item OnClick="@OnSortByUrl">
+        Sort by URL
+    </Item>
+    <Item OnClick="@OnUnifyWindows">
+        Unify windows
+    </Item>
+    @* TODO: Disable for Type=Previous *@
+    <Item OnClick="@OnOverwriteSession">
+        Overwrite with current
+    </Item>
 </ContextMenu>
 
 @code
 {
-    private void OnRenameSession()
+    private async Task OnRenameSession(ItemClickEventArgs args)
     {
-        
+        if (await DialogService.ShowDialogAsync(DialogId.Rename))
+        {
+            SessionService.RenameSession(-1, string.Empty);
+        }
     }
 
-    private void OnDuplicateSession()
+    private void OnDuplicateSession(ItemClickEventArgs args)
     {
-        
+        SessionService.DuplicateSession(-1, string.Empty);
     }
 
-    private void OnDeleteSession()
+    private void OnDeleteSession(ItemClickEventArgs args)
     {
-        
+        SessionService.DeleteSession(-1);
     }
     
-    private void OnSortByTitle()
+    private void OnSortByTitle(ItemClickEventArgs args)
     {
         LayoutService.ChangeSortOrder(SortOrder.Title);
     }
     
-    private void OnSortByUrl()
+    private void OnSortByUrl(ItemClickEventArgs args)
     {
         LayoutService.ChangeSortOrder(SortOrder.Url);
     }
 
-    private void OnUnifyWindows()
+    private void OnUnifyWindows(ItemClickEventArgs args)
     {
-        
+        SessionService.UnifyWindows(-1);
     }
 
-    private void OnOverwriteSession()
+    private void OnOverwriteSession(ItemClickEventArgs args)
     {
-        
+        SessionService.OverwriteSession(-1);
     }
 }

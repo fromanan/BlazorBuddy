@@ -1,4 +1,4 @@
-﻿<button class="nostyle highlight icon-button@(IconOnlyString) @(Class)" onclick="@ClickAction" disabled="@Disabled" selected="@Selected" style="@Style">
+﻿<button class="nostyle highlight icon-button@(IconOnlyString) @(Class)" @onclick="@ClickActionAsync" disabled="@Disabled" selected="@Selected" style="@Style">
     @Body
     @BodyChildContent
 </button>
@@ -16,8 +16,13 @@
     [Parameter]
     public string? Class { get; set; }
     
+    // TODO: Fix the differentiation
+    
     [Parameter]
-    public required Action ClickAction { get; set; }
+    public Action<MouseEventArgs> ClickAction { get; set; }
+    
+    [Parameter]
+    public Func<MouseEventArgs, Task> ClickActionAsync { get; set; }
     
     [Parameter]
     public bool Disabled { get; set; }

@@ -1,4 +1,6 @@
-﻿namespace Application.Data;
+﻿using System.ComponentModel;
+
+namespace Application.Data;
 
 public static class Utils
 {
@@ -41,14 +43,14 @@ public static class Utils
         return count == 1 ? $"a{(unit == "hour" ? "n" : string.Empty)} {unit}" : Pluralize(count, unit);
     }
 
-    public static string GetVerb(SessionType sessionType)
+    public static string GetVerb(SessionType type)
     {
-        return sessionType switch
+        return type switch
         {
             SessionType.Current     => "Changed",
             SessionType.Previous    => "Recorded",
             SessionType.Saved       => "Saved",     // Or updated if changed
-            _                       => "N/A"
+            _                       => throw new InvalidEnumArgumentException($"Invalid session type '{type}'")
         };
     }
 

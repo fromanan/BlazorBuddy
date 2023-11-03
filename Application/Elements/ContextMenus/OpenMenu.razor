@@ -27,18 +27,18 @@
         
     }
 
-    private void OpenAllClicked()
+    private void OpenAllClicked(MouseEventArgs args)
     {
-        
+        BrowserService.OpenAllTabs();
     }
 
-    private void OpenOneClicked()
+    private void OpenOneClicked(MouseEventArgs args)
     {
-        
+        BrowserService.OpenTabsInOneWindow();
     }
 
-    private void OpenThisClicked()
+    private void OpenThisClicked(MouseEventArgs args)
     {
-        
+        BrowserService.OpenTabsInThisWindow();
     }
 }

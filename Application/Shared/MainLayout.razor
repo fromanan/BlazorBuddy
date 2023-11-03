@@ -2,8 +2,11 @@
 
 <PageTitle>Application</PageTitle>
 
-<div class="dialogs">
-    
+<div id="dialogs" class="stretch">
+    @foreach (RenderFragment renderFragment in DialogService.RenderAllDialogs())
+    {
+        @renderFragment
+    }
 </div>
 
 @LayoutService.RenderOverlay()

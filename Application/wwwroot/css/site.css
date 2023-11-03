@@ -162,7 +162,7 @@ button.window-title, div.window-counts {
 }
 
 .blazor-error-boundary {
-    background: url(../images/error.svg) no-repeat 1rem/1.8rem, #b32121;
+    background: url(../img/error.svg) no-repeat 1rem/1.8rem, #b32121;
     padding: 1rem 1rem 1rem 3.7rem;
     color: white;
 }
@@ -243,7 +243,7 @@ div.nav-scrollable nav > hr {
 }
 
 ul.window-list li.window {
-    list-style-image: url(../images/win.png);
+    list-style-image: url(../img/win.png);
     position: relative;
 }
 
@@ -337,31 +337,31 @@ button.icon-only {
 }
 
 button.save-button {
-    background-image: url(../images/sv.gif);
+    background-image: url(../img/sv.gif);
 }
 
 button.open-button {
-    background-image: url(../images/r.gif);
+    background-image: url(../img/r.gif);
 }
 
 button.options-button {
-    background-image: url(../images/kabob.svg);
+    background-image: url(../img/kabob.svg);
 }
 
 button.donate-button {
-    background-image: url(../images/hts.svg);
+    background-image: url(../img/hts.svg);
 }
 
 button.compact-button {
-    background-image: url(../images/uo.gif);
+    background-image: url(../img/uo.gif);
 }
 
 button.default-button {
-    background-image: url(../images/u.gif);
+    background-image: url(../img/u.gif);
 }
 
 button.settings-button {
-    background-image: url(../images/cfg.svg);
+    background-image: url(../img/cfg.svg);
 }
 
 .debug-highlight {
@@ -398,15 +398,15 @@ div.blazor-context-menu hr.blazor-context-menu__separator__hr {
 }
 
 .icon-open-all {
-    background-image: url(../images/r.gif);
+    background-image: url(../img/r.gif);
 }
 
 .icon-open-one {
-    background-image: url(../images/rs.gif);
+    background-image: url(../img/rs.gif);
 }
 
 .icon-open-this {
-    background-image: url(../images/rc.gif);
+    background-image: url(../img/rc.gif);
 }
 
 .context-menu-icon {
@@ -464,14 +464,55 @@ button[selected], button[selected]:hover {
     margin-right: 15px;
 }
 
-#overlay {
+.stretch {
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
+}
+
+#overlay {
     background-color: black;
     z-index: 1001;
     opacity: 0.3;
     transition: opacity .1s linear;
+}
+
+#dialogs {
+    z-index: 1002;
+    pointer-events: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+dialog button.dialog-close {
+    background: url("../img/x.gif") no-repeat 50% 50%;
+    background-size: 10px;
+    padding-left: 11px;
+    padding-right: 11px;
+    width: 32px;
+    height: 32px;
+    overflow: visible;
 }

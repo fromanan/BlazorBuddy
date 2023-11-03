@@ -16,6 +16,8 @@
 
 @code
 {
+    #region Parameters
+
     [Parameter]
     public string? Title { get; set; }
     
@@ -34,8 +36,12 @@
     [Parameter]
     public int Identifier { get; set; }
 
-    private string TabString => Utils.Pluralize(TabCount, "Tab");
+    #endregion
 
+    #region Properties
+
+    private string TabString => Utils.Pluralize(TabCount, "Tab");
+    
     private string TitleString => Title ?? (IsSavedSession ? "Unnamed session" : VerbString);
 
     private string SelectedString => Selected ? "selected-session" : string.Empty;
@@ -43,6 +49,8 @@
     private string VerbString => $"{Utils.GetVerb(SessionType)} {Utils.GetTimeString(LastChange)} ago";
 
     private bool IsSavedSession => SessionType is SessionType.Saved;
+
+    #endregion
 
     protected override void OnParametersSet()
     {

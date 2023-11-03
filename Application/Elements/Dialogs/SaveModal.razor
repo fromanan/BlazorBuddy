@@ -1,6 +1,6 @@
 ﻿@inherits Dialog
 
-<Dialog Id="save-modal" Title="Save Session" Opened="@Opened" ModalResultCallback="@ModalResultCallback">
+<Dialog Id="@DialogId.Save" Title="Save Session">
     <BodyContent>
         <label class="flex-child-text" for="@Id-name">Name:</label>
         <div class="flex-fill">
@@ -12,15 +12,15 @@
             <input id="@Id-never-ask" type="checkbox" @bind="@NeverAskForName"/>
             <label for="@Id-never-ask">
                 @(HtmlEntity.NON_BREAKING_SPACE)
-                <a class="nostyle clickonly" onclick="@OnNameClick">
+                <a class="nostyle clickonly" @onclick="@OnNameClick">
                     Never ask for name
                 </a>
             </label>
         </div>
         <FlexSpacer/>
         <div class="dialog-buttons">
-            <button @ref="@_confirmButton" onclick="@OnOkPressed" class="highlight">OK</button>
-            <button onclick="@OnCancelPressed" class="highlight">Cancel</button>
+            <button type="button" @ref="@_confirmButton" @onclick="@OnOkPressed" class="highlight">OK</button>
+            <button type="button" @onclick="@OnCancelPressed" class="highlight">Cancel</button>
         </div>
     </FooterContent>
 </Dialog>
@@ -29,9 +29,9 @@
 {
     public string? SessionName { get; set; }
 
-    private bool NeverAskForName { get; set; } = false;
+    private bool NeverAskForName { get; set; }
 
-    private ElementReference _confirmButton = default!;
+    private ElementReference _confirmButton;
     
     public struct SaveSessionResult
     {
@@ -54,14 +54,14 @@
         await _confirmButton.FocusAsync();
     }
 
-    private void OnOkPressed()
+    private async void OnOkPressed()
     {
-        CloseModal(true);
+        await CloseModal(true);
     }
 
-    private void OnCancelPressed()
+    private async void OnCancelPressed()
     {
-        CancelDialog();
+        await CancelDialog();
     }
 
     private void OnNameClick()

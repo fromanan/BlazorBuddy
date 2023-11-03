@@ -1,0 +1,55 @@
+﻿@inherits Dialog
+
+<Dialog Id="@DialogId.Rename" Title="Name Session">
+    <BodyContent>
+        <label class="flex-child-text" for="@Id-name">Name:</label>
+        <div class="flex-fill">
+            <input id="@Id-name" type="text" @bind="@SessionName"/>
+        </div>
+    </BodyContent>
+    <FooterContent>
+        <FlexSpacer/>
+        <div class="dialog-buttons">
+            <button type="button" @ref="@_confirmButton" @onclick="@OnOkPressed" class="highlight">OK</button>
+            <button type="button" @onclick="@OnCancelPressed" class="highlight">Cancel</button>
+        </div>
+    </FooterContent>
+</Dialog>
+
+@code
+{
+    public string? SessionName { get; set; }
+
+    private bool NeverAskForName { get; set; } = false;
+
+    private ElementReference _confirmButton;
+    
+    public struct NameSessionResult
+    {
+        public string? Name;
+    }
+
+    protected override object? GetDialogResult()
+    {
+        // ReSharper disable once HeapView.BoxingAllocation
+        return new NameSessionResult
+        {
+            Name = SessionName
+        };
+    }
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        await _confirmButton.FocusAsync();
+    }
+
+    private async void OnOkPressed()
+    {
+        await CloseModal(true);
+    }
+
+    private async void OnCancelPressed()
+    {
+        await CancelDialog();
+    }
+}

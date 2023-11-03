@@ -20,12 +20,12 @@
 
 @code
 {
-    private void OnCompactLayoutClick()
+    private void OnCompactLayoutClick(MouseEventArgs args)
     {
         LayoutService.ChangeLayoutStyle(LayoutStyle.Compact);
     }
 
-    private void OnDefaultLayoutClick()
+    private void OnDefaultLayoutClick(MouseEventArgs args)
     {
         LayoutService.ChangeLayoutStyle(LayoutStyle.Default);
     }

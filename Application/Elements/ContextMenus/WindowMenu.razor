@@ -1,31 +1,58 @@
 ﻿<ContextMenu Id="@ContextMenuId.WINDOW">
-    <Item OnClick="@OnSaveClicked">Save</Item>
-    <Item OnClick="@OnSaveCloseClicked">Save & Close</Item>
+    <Item OnClick="@OnSaveClicked">
+        Save
+    </Item>
+    <Item OnClick="@OnSaveCloseClicked">
+        Save & Close
+    </Item>
     <Separator/>
-    <Item OnClick="@OnFocusClicked">Focus</Item>
+    <Item OnClick="@OnFocusClicked">
+        Focus
+    </Item>
     <Separator/>
-    <Item OnClick="@OnCloseClicked">Close</Item>
+    <Item OnClick="@OnCloseClicked">
+        Close
+    </Item>
 </ContextMenu>
 
 @code
 {
-    private void OnSaveClicked()
+    private async Task OnSaveClicked(ItemClickEventArgs args)
     {
-        
+        await DialogService.ShowDialogAsync(DialogId.Save, OnModalSubmit);
     }
 
-    private void OnSaveCloseClicked()
+    private async Task OnSaveCloseClicked(ItemClickEventArgs args)
     {
-        
+        if (await DialogService.ShowDialogAsync(DialogId.Save, OnModalSubmit))
+        {
+            SessionService.SaveAndCloseWindow(-1, -1);
+        }
     }
 
-    private void OnFocusClicked()
+    private void OnFocusClicked(ItemClickEventArgs args)
     {
-        
+        LayoutService.FocusWindow(-1);
     }
 
-    private void OnCloseClicked()
+    private void OnCloseClicked(ItemClickEventArgs args)
     {
+        SessionService.CloseWindow(-1, -1);
+    }
+    
+    private void OnModalSubmit(bool success, object? result)
+    {
+        if (!success)
+            return;
         
+        switch (result)
+        {
+            case SaveModal.SaveSessionResult saveSessionResult:
+            {
+                SessionService.SaveCurrentSession(saveSessionResult.Name);
+                InvokeAsync(StateHasChanged);
+                return;
+            }
+        }
     }
 }

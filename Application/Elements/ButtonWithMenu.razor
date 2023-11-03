@@ -1,5 +1,5 @@
 ﻿<button class="nostyle highlight @(Class)" Disabled="@Disabled" style="position:relative;">
-    @if (!Disabled) @ContextMenuFactory.RegisterNewMenu(ContextMenuId, Trigger, $"{MenuClass} fill-parent")
+    @if (!Disabled) @ContextMenuService.RegisterNewMenu(ContextMenuId, Trigger, $"{MenuClass} fill-parent")
     @Body
     @ChildContent
 </button>
