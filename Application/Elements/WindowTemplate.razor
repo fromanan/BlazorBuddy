@@ -1,0 +1,34 @@
+﻿<li class="window @Window.SelectedWindowClass">
+    <div>
+        <ClickableIcon IconClass="tab-close" Url="../images/xto.png" ClickAction="@WindowCloseAction"/>
+        <ButtonWithMenu Class="window-title highlight-accent" ContextMenuId="@ContextMenuId.WINDOW" Trigger="@Trigger">
+            @Window.Title
+        </ButtonWithMenu>
+        <div class="window-counts">
+            <Spacer/>
+            <span class="text-secondary">
+                @Utils.Pluralize(Window.TabCount, "tab")
+            </span>
+        </div>
+    </div>
+    <ul class="tab-list">
+        @foreach (Tab tab in Window.Tabs)
+        {
+            <TabTemplate Tab="@tab" TabCloseAction="@TabCloseAction"/>
+        }
+    </ul>
+</li>
+
+@code
+{
+    [Parameter]
+    public required Window Window { get; init; }
+    
+    [Parameter]
+    public required Action WindowCloseAction { get; set; }
+    
+    [Parameter]
+    public required Action TabCloseAction { get; set; }
+    
+    private MouseButtonTrigger Trigger => MouseButtonTrigger.Right | MouseButtonTrigger.DoubleClick;
+}

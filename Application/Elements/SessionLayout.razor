@@ -1,0 +1,135 @@
+﻿<div class="session-title-bar flex-parent">
+    <div class="page-title flex-child-text">
+        <a class="@TitleClassString" onclick="@OnRenameWindow">
+            <h1>@TitleString</h1>
+        </a>
+    </div>
+    
+    <div class="modals" style="z-index:1010">
+        <SaveModal @ref="@_saveModal" ModalResultCallback="@OnModalSubmit"/>
+    </div>
+    
+    <FlexSpacer/>
+    
+    <div class="icons">
+        <IconButton ClickAction="@OnSaveClicked" Class="save-button" Disabled="@(!IsSaveable)">
+            Save
+        </IconButton>
+        <IconButtonWithMenu ContextMenuId="@ContextMenuId.OPEN" Class="open-button" Disabled="@(!IsOpenable)">
+            Open
+        </IconButtonWithMenu>
+        <IconButtonWithMenu ContextMenuId="@ContextMenuId.OPTIONS" IconOnly="@true" Class="options-button">
+            Options
+        </IconButtonWithMenu>
+    </div>
+</div>
+
+<hr/>
+
+<div class="session-subtitle-bar flex-parent">
+    <div class="session-subtitle flex-child-text">
+        Changed @TimeString<Spacer/>
+        <span class="text-secondary">@Utils.GetTimeString(LastChange) ago</span>
+    </div>
+    <FlexSpacer/>
+    <div class="session-counts">
+        @WindowCount Windows
+        <Spacer Width="0.25f"/>
+        @TabCount Tabs
+    </div>
+</div>
+
+<br/>
+
+<ul class="window-list">
+    @if (Windows is { Count: > 0 })
+    {
+        foreach (Window window in Windows)
+        {
+            <WindowTemplate Window="@window" WindowCloseAction="@OnCloseWindow" TabCloseAction="@OnCloseTab"/>
+        }
+    }
+</ul>
+
+@ChildContent
+
+@code
+{
+    [Parameter]
+    public string? Title { get; set; }
+    
+    [Parameter]
+    public int WindowCount { get; set; }
+    
+    [Parameter]
+    public int TabCount { get; set; }
+    
+    [Parameter]
+    public DateTime LastChange { get; set; }
+    
+    [Parameter]
+    public DateTime? Created { get; set; }
+    
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    
+    [Parameter]
+    public List<Window> Windows { get; set; } = new();
+    
+    [Parameter]
+    public SessionType SessionType { get; set; }
+
+    private SaveModal _saveModal = null!;
+    
+    private string TitleClassString => IsRenameable ? "clickonly" : "nostyle";
+    
+    private string TimeString => $"{LastChange:g}";
+
+    private string TitleString => Title ?? SessionType switch 
+    {
+        SessionType.Current     => "Current Session",
+        SessionType.Previous    => "Previous Session",
+        _                       => "Unnamed session"
+    };
+    
+    private bool IsRenameable => SessionType is SessionType.Saved;
+
+    private bool IsSaveable => SessionType is not SessionType.Saved;
+    
+    private bool IsOpenable => SessionType is not SessionType.Current;
+    
+    protected override void OnInitialized()
+    {
+        if (Windows is { Count: > 0 })
+            Windows[0].IsCurrentWindow = true;
+    }
+    
+    private void OnCloseWindow()
+    {
+        Console.WriteLine("Closing window!");
+    }
+
+    private void OnCloseTab()
+    {
+        Console.WriteLine("Closing tab!");
+    }
+
+    private void OnRenameWindow()
+    {
+        Console.WriteLine("Renaming window!");   
+    }
+
+    private void OnSaveClicked()
+    {
+        _saveModal.OpenModal();
+    }
+
+    private void OnModalSubmit(bool success, object? result)
+    {
+        if (success && result is SaveModal.SaveSessionResult saveSessionResult)
+        {
+            SessionService.SaveCurrentSession(saveSessionResult.Name);
+            InvokeAsync(StateHasChanged);
+        }
+    }
+}

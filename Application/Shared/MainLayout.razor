@@ -1,0 +1,27 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>Application</PageTitle>
+
+<div class="dialogs">
+    
+</div>
+
+@LayoutService.RenderOverlay()
+
+<ContextMenuGroup/>
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu/>
+    </div>
+    
+    <main>
+        <div class="nav-main navbar-dark top-row px-4">
+            <MainNavBar/>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>

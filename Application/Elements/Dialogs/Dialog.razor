@@ -1,0 +1,75 @@
+﻿<dialog id="@Id" open="@Opened" onkeydown="@OnKeyDown">
+    <form id="@Id-form" method="dialog">
+        <div id="@Id-header" class="dialog-header flex-parent">
+            <legend class="flex-child-text">@Title</legend>
+            <FlexSpacer/>
+            <IconButton IconOnly="@true" Class="modal-close"/>
+        </div>
+        <div id="@Id-body" class="dialog-body flex-parent">
+            @BodyContent
+        </div>
+        <div id="@Id-footer" class="dialog-footer flex-parent">
+            @FooterContent
+        </div>
+    </form>
+</dialog>
+
+@code
+{
+    [Parameter]
+    public required string Id { get; set; }
+    
+    [Parameter]
+    public required string Title { get; set; }
+    
+    [Parameter]
+    public bool Opened { get; set; }
+    
+    [Parameter]
+    public RenderFragment? BodyContent { get; set; }
+    
+    [Parameter]
+    public RenderFragment? FooterContent { get; set; }
+
+    [Parameter]
+    public required Action<bool, object?> ModalResultCallback { get; set; }
+
+    public void OpenModal()
+    {
+        LayoutService.ShowOverlay();
+        Opened = true;
+    }
+
+    // Passing result lets us manually override a result, if needed by a handler
+    protected void CloseModal(bool success = false, object? result = null)
+    {
+        LayoutService.HideOverlay();
+        Opened = false;
+        ModalResultCallback(success, result ?? (success ? GetDialogResult() : null));
+    }
+
+    protected void CancelDialog()
+    {
+        CloseModal();
+    }
+
+    protected virtual object? GetDialogResult()
+    {
+        return null;
+    }
+
+    protected virtual void OnKeyDown(KeyboardEventArgs args)
+    {
+        switch (args.Key)
+        {
+            case KeyCode.Enter:
+            case KeyCode.Accept:
+                CloseModal(true);
+                break;
+            case KeyCode.Escape:
+            case KeyCode.Cancel:
+                CancelDialog();
+                break;
+        }
+    }
+}

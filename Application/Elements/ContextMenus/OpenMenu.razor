@@ -1,0 +1,44 @@
+﻿<ContextMenu Id="@ContextMenuId.OPEN">
+    <Item>
+        <IconButton Class="icon-open-all context-menu-icon" ClickAction="@OpenAllClicked">
+            Open @TabCountString
+        </IconButton>
+    </Item>
+    <Item>
+        <IconButton Class="icon-open-one context-menu-icon" ClickAction="@OpenOneClicked">
+            Open @TabCountString in <b>one window</b>
+        </IconButton>
+    </Item>
+    <Item>
+        <IconButton Class="icon-open-this context-menu-icon" ClickAction="@OpenThisClicked">
+            Open @TabCountString in <b>this window</b>
+        </IconButton>
+    </Item>
+</ContextMenu>
+
+@code
+{
+    private int TabCount { get; set; } = 0;
+
+    private string TabCountString => Utils.Pluralize(TabCount, "tab");
+    
+    protected override void OnInitialized()
+    {
+        
+    }
+
+    private void OpenAllClicked()
+    {
+        
+    }
+
+    private void OpenOneClicked()
+    {
+        
+    }
+
+    private void OpenThisClicked()
+    {
+        
+    }
+}

@@ -1,0 +1,27 @@
+﻿<div id="@Id" class="@Class" hidden="@HiddenString"></div>
+
+@code
+{
+    [Parameter]
+    public bool Hidden { get; set; } = true;
+    
+    [Parameter]
+    public string? Id { get; set; }
+    
+    [Parameter]
+    public string? Class { get; set; }
+
+    private string? HiddenString => Hidden ? "hidden" : null;
+
+    public void Show()
+    {
+        Hidden = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Hide()
+    {
+        Hidden = true;
+        InvokeAsync(StateHasChanged);
+    }
+}

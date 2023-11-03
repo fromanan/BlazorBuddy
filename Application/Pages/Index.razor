@@ -1,0 +1,17 @@
+﻿@page "/"
+
+<PageTitle>Blazor Buddy</PageTitle>
+
+@SessionService.RenderSelectedSession()
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        SessionService.SelectionChanged += _ => InvokeAsync(StateHasChanged);
+        SessionService.SessionsUpdated += () => InvokeAsync(StateHasChanged);
+        LayoutService.LayoutStyleChanged += _ => InvokeAsync(StateHasChanged);
+        LayoutService.SortOrderChanged += _ => InvokeAsync(StateHasChanged);
+        LayoutService.OverlayChanged += () => InvokeAsync(StateHasChanged);
+    }
+}

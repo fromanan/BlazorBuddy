@@ -1,0 +1,14 @@
+﻿<span class="spacer" style="@StyleString">@(HtmlEntity.NON_BREAKING_SPACE)</span>
+
+@code
+{
+    [Parameter]
+    public float Width { get; set; } = 1;
+
+    [Parameter]
+    public string Unit { get; set; } = "em";
+
+    private string WidthString => $"{Width / 2}{Unit}";
+
+    private string StyleString => $"padding-left:{WidthString};padding-right:{WidthString};";
+}

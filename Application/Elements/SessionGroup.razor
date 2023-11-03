@@ -1,0 +1,21 @@
+﻿<div class="session-section nopad">
+    <h5 class="session-title">@Title</h5>
+    @ChildContent
+</div>
+
+@code
+{
+    [Parameter]
+    public string? Title { get; init; }
+    
+    [Parameter]
+    public SessionType SessionType { get; init; }
+    
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public int MaxDisplayCount { get; set; } = 3;
+
+    public bool Expanded { get; set; }
+}

@@ -1,0 +1,32 @@
+﻿<div class="nav-main top-row">
+    @*<ClickableIcon Class="donate-button">
+        Donate
+    </ClickableIcon>*@
+    <IconButton IconOnly="@true" Class="donate-button">
+        Donate
+    </IconButton>
+    <Spacer Width="2"/>
+    <IconButton IconOnly="@true" Class="compact-button" ClickAction="@OnCompactLayoutClick" Selected="@(LayoutService.ActiveLayoutStyle is LayoutStyle.Compact)">
+        Compact
+    </IconButton>
+    <IconButton IconOnly="@true" Class="default-button" ClickAction="@OnDefaultLayoutClick" Selected="@(LayoutService.ActiveLayoutStyle is LayoutStyle.Default)">
+        Normal
+    </IconButton>
+    <Spacer/>
+    <IconButtonWithMenu ContextMenuId="@ContextMenuId.SETTINGS" IconOnly="@true" Class="settings-button">
+        Settings
+    </IconButtonWithMenu>
+</div>
+
+@code
+{
+    private void OnCompactLayoutClick()
+    {
+        LayoutService.ChangeLayoutStyle(LayoutStyle.Compact);
+    }
+
+    private void OnDefaultLayoutClick()
+    {
+        LayoutService.ChangeLayoutStyle(LayoutStyle.Default);
+    }
+}

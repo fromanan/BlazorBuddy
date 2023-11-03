@@ -1,0 +1,4 @@
+div.flex-spacer {
+    display: inline-flex;
+    flex-grow: 1;
+}

@@ -1,0 +1,20 @@
+﻿@inherits IconButton
+
+@* Disable IconOnly as we are handling it here (if we send true, it won't render the context menu trigger) *@
+<IconButton IconOnly="@false" Class="@(Class + IconOnlyString)" Disabled="@Disabled" Selected="@Selected" Style="position:relative;">
+    @if (!Disabled) @ContextMenuFactory.RegisterNewMenu(ContextMenuId, Trigger, $"{MenuClass} fill-parent")
+    @Body
+    @BodyChildContent
+</IconButton>
+
+@code
+{
+    [Parameter]
+    public MouseButtonTrigger Trigger { get; set; } = MouseButtonTrigger.Left;
+    
+    [Parameter]
+    public required string ContextMenuId { get; set; }
+    
+    [Parameter]
+    public string? MenuClass { get; set; }
+}

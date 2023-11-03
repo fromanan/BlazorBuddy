@@ -1,0 +1,24 @@
+﻿<a class="clickable" @onclick="ClickAction">
+    <MiniIcon Url="@Url" Class="@IconClass"/>
+</a>
+
+@code
+{
+    [Parameter]
+    public string? Url { get; set; }
+    
+    [Parameter]
+    public string? IconClass { get; set; }
+    
+    [Parameter]
+    public string? AnchorClass { get; set; }
+
+    [Parameter]
+    public string Link { get; set; } = "#";
+    
+    [Parameter]
+    public required Action ClickAction { get; set; }
+    
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

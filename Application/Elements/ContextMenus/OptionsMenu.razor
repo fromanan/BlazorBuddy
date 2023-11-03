@@ -1,0 +1,48 @@
+﻿<ContextMenu Id="@ContextMenuId.OPTIONS">
+    <Item OnClick="@OnRenameSession">Rename</Item>
+    <Item OnClick="@OnDuplicateSession">Duplicate</Item>
+    <Item OnClick="@OnDeleteSession">Delete</Item>
+    <Separator/>
+    <Item OnClick="@OnSortByTitle">Sort by title</Item>
+    <Item OnClick="@OnSortByUrl">Sort by URL</Item>
+    <Item OnClick="@OnUnifyWindows">Unify windows</Item>
+    <Item OnClick="@OnOverwriteSession">Overwrite with current</Item>
+</ContextMenu>
+
+@code
+{
+    private void OnRenameSession()
+    {
+        
+    }
+
+    private void OnDuplicateSession()
+    {
+        
+    }
+
+    private void OnDeleteSession()
+    {
+        
+    }
+    
+    private void OnSortByTitle()
+    {
+        LayoutService.ChangeSortOrder(SortOrder.Title);
+    }
+    
+    private void OnSortByUrl()
+    {
+        LayoutService.ChangeSortOrder(SortOrder.Url);
+    }
+
+    private void OnUnifyWindows()
+    {
+        
+    }
+
+    private void OnOverwriteSession()
+    {
+        
+    }
+}

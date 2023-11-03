@@ -1,0 +1,67 @@
+﻿<button @onclick="Select" class="nostyle full nopad">
+    <div class="session-row @SelectedString">
+        @TitleString
+        <br/>
+        <div class="flex-parent">
+            <div class="text-secondary flex-child-text" hidden="@(!IsSavedSession)">
+                @VerbString
+            </div>
+            <FlexSpacer Hidden="@(!IsSavedSession)"/>
+            <div class="text-secondary flex-child-text">
+                @TabString
+            </div>
+        </div>
+    </div>
+</button>
+
+@code
+{
+    [Parameter]
+    public string? Title { get; set; }
+    
+    [Parameter]
+    public int TabCount { get; set; }
+    
+    [Parameter]
+    public DateTime LastChange { get; set; }
+    
+    [Parameter]
+    public SessionType SessionType { get; set; }
+
+    [Parameter]
+    public bool Selected { get; set; }
+    
+    [Parameter]
+    public int Identifier { get; set; }
+
+    private string TabString => Utils.Pluralize(TabCount, "Tab");
+
+    private string TitleString => Title ?? (IsSavedSession ? "Unnamed session" : VerbString);
+
+    private string SelectedString => Selected ? "selected-session" : string.Empty;
+
+    private string VerbString => $"{Utils.GetVerb(SessionType)} {Utils.GetTimeString(LastChange)} ago";
+
+    private bool IsSavedSession => SessionType is SessionType.Saved;
+
+    protected override void OnParametersSet()
+    {
+        if (Selected)
+            SessionService.SelectionChanged += OnSelectionChanged;
+    }
+
+    private void Select()
+    {
+        Selected = true;
+        SessionService.UpdateSelection(Identifier);
+        SessionService.SelectionChanged += OnSelectionChanged;
+    }
+
+    private void OnSelectionChanged(int id)
+    {
+        if (!Selected || id == Identifier)
+            return;
+        Selected = false;
+        SessionService.SelectionChanged -= OnSelectionChanged;
+    }
+}

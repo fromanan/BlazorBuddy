@@ -1,0 +1,18 @@
+﻿<li class="tab">
+    <MiniIcon Class="favicon" Url="https://www.google.com/favicon.ico"/>
+    <ClickableIcon IconClass="tab-close" Url="../images/xto.png" ClickAction="@TabCloseAction"/>
+    <div>
+        <a href="@Tab.Url" target="_blank" class="clickonly">@Tab.Title</a>
+        <br/>
+        <span class="link-color">@Tab.Url</span>
+    </div>
+</li>
+
+@code
+{
+    [Parameter]
+    public required Tab Tab { get; init; }
+    
+    [Parameter]
+    public required Action TabCloseAction { get; set; }
+}
