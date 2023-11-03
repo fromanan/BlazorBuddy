@@ -1,0 +1,477 @@
+@import url('context-menu/blazor-context-menu.min.css');
+
+/*https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap*/
+@import url('roboto.min.css');
+
+/* Default Properties */
+:root {
+    --bs-primary-rgb: 0, 0, 0;
+    --bs-secondary-rgb: hsl(0, 0%, 66%);
+}
+
+html, body {
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+}
+
+h1 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+hr {
+    color: #aaa;
+}
+
+.text-primary {
+    color: var(--bs-primary-rgb) !important;
+}
+
+.text-secondary {
+    color: var(--bs-secondary-rgb) !important;
+}
+
+.nostyle, .nostyle:hover {
+    color: inherit;
+    text-decoration: inherit;
+    text-align: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+button.nostyle {
+    background-color: rgba(0,0,0,0);
+    border: none;
+    display: inline-block;
+}
+
+a.nostyle:link, a.nostyle:visited, a.noclick:link, a.noclick:visited {
+    cursor: auto;
+}
+
+a.clickonly, a.clickonly:link, a.clickonly:visited {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+a.clickonly:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+button.compact {
+
+}
+
+button.full {
+    width: 100%;
+    margin: 0;
+}
+
+.nopad {
+    padding: 0;
+}
+
+h1:focus {
+    outline: none;
+}
+
+a, .btn-link, .link-color {
+    color: #0071c1;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.btn-primary {
+    color: white;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+div.nav-main {
+    /*background-color: color-mix(in srgb, rgb(5, 39, 103) 60%, black);*/
+    background-color: rgb(5, 39, 103);
+}
+
+/*div.nav-main > button.icon-button {
+    background-color: hsla(0, 0%, 80%, 0.2);
+}*/
+
+div.nav-main > button.icon-button:hover {
+    background-color: hsla(205, 83%, 59%, 0.8);
+}
+
+div.page-title > a > h1 {
+    color: hsl(0, 0%, 30%);
+}
+
+button.window-title, button.window-title:hover {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+button.window-title, div.window-counts {
+    display: inline-block;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow:
+        0 0 0 0.1rem
+        white,
+        0 0 0 0.25rem
+        #258cfb;
+}
+
+.content {
+    padding-top: 1.1rem;
+}
+
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+
+.invalid {
+    outline: 1px solid red;
+}
+
+.validation-message {
+    color: red;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+.blazor-error-boundary {
+    background: url(../images/error.svg) no-repeat 1rem/1.8rem, #b32121;
+    padding: 1rem 1rem 1rem 3.7rem;
+    color: white;
+}
+
+.blazor-error-boundary::after {
+    content: "An error has occurred."
+}
+
+button.highlight:hover {
+    background-color: #eee;
+}
+
+button.highlight-accent, button.highlight-accent:hover {
+    color: hsl(205, 83%, 54%);
+}
+
+button.highlight-accent:hover {
+    background-color: hsl(205, 83%, 93%);
+}
+
+div.align-right, div.align-left {
+    display: inline-block;
+}
+
+div.align-right {
+    float: right;
+}
+
+div.align-left {
+    float: left;
+}
+
+div.selected-session span.text-secondary {
+    color: rgb(255, 255, 255) !important;
+}
+
+div.session-section {
+    margin-bottom: 10px;
+}
+
+div.session-row {
+    color: white;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    background-color: hsla(0, 0%, 94%, 0.4);
+    border-bottom: 1px solid hsla(0, 0%, 0%, 0.09);
+    border-radius: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+div.selected-session {
+    background-color: hsl(0, 0%, 44%);
+}
+
+.session-row:active, .session-row:focus {
+    background-color: hsla(205, 83%, 59%, 0.8);
+}
+
+h5.session-title {
+    color: white;
+    font-size: 16px;
+    font-weight: 300;
+    margin-bottom: 10px;
+}
+
+ul.window-list > li {
+    margin: 10px 0;
+}
+
+ul.tab-list > li {
+    margin: 10px 0;
+}
+
+div.nav-scrollable nav > hr {
+    color: #eee;
+    margin: 5px 10px 20px;
+}
+
+ul.window-list li.window {
+    list-style-image: url(../images/win.png);
+    position: relative;
+}
+
+ul.tab-list li.tab {
+    list-style: none;
+    position: relative;
+    margin-left: 5px;
+}
+
+ul.tab-list li.tab:before {
+    content: '';
+    width: 10%;
+    height: 100%;
+    position: absolute;
+    left: -10%;
+}
+
+img.favicon {
+    position: absolute;
+    display: block;
+    left: -27px;
+    margin-top: 2px;
+}
+
+img.tab-close {
+    position: absolute;
+    display: none;
+    left: -54px;
+    margin-top: 1px;
+}
+
+li.window > div:hover > a > img.tab-close {
+    display: block;
+}
+
+li.window > div > a > img.tab-close {
+    left: -50px;
+    margin-top: 2px;
+}
+
+li.window > div:before {
+    content: '';
+    width: 10%;
+    height: 30%;
+    position: absolute;
+    left: -10%;
+}
+
+li.tab:hover > a > img.tab-close {
+    display: block;
+}
+
+ul.window-list {
+    margin-left: 25px;
+}
+
+div.icons {
+    margin-top: -0.5%;
+}
+
+/* Buttons */
+
+button.icon-button {
+    display: inline-block;
+    background-repeat: no-repeat;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    position: relative;
+}
+
+button.icon-button:not(button.icon-only) {
+    padding-left: 40px;
+    padding-right: 13px;
+    background-position: 12px 20%;
+}
+
+button.icon-only {
+    padding-right: 21px;
+    padding-left: 21px;
+    background-position: 50% 50%;
+    background-size: 16px;
+}
+
+.fill-parent {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+button.save-button {
+    background-image: url(../images/sv.gif);
+}
+
+button.open-button {
+    background-image: url(../images/r.gif);
+}
+
+button.options-button {
+    background-image: url(../images/kabob.svg);
+}
+
+button.donate-button {
+    background-image: url(../images/hts.svg);
+}
+
+button.compact-button {
+    background-image: url(../images/uo.gif);
+}
+
+button.default-button {
+    background-image: url(../images/u.gif);
+}
+
+button.settings-button {
+    background-image: url(../images/cfg.svg);
+}
+
+.debug-highlight {
+    background-color: rgba(255, 0, 0, 0.25);
+}
+
+.debug-highlight:hover {
+    background-color: rgba(255, 255, 0, 0.25);
+}
+
+.debug-highlight:focus {
+    background-color: rgba(0, 255, 255, 0.25);
+}
+
+.context-menu-trigger {
+    
+}
+
+div.blazor-context-menu {
+    font-size: 13px;
+}
+
+div.blazor-context-menu ul.blazor-context-menu__list {
+    padding: 5px 10px;
+}
+
+div.blazor-context-menu li.blazor-context-menu__item {
+    padding: 10px 10px;
+}
+
+div.blazor-context-menu hr.blazor-context-menu__separator__hr {
+    padding: 0;
+    margin: 5px 0;
+}
+
+.icon-open-all {
+    background-image: url(../images/r.gif);
+}
+
+.icon-open-one {
+    background-image: url(../images/rs.gif);
+}
+
+.icon-open-this {
+    background-image: url(../images/rc.gif);
+}
+
+.context-menu-icon {
+    background-position-y: -13px !important;
+    background-position-x: 11px !important;
+}
+
+.context-menu-icon:hover {
+    background-position-y: -77.5px !important;
+}
+
+div.session-row .text-secondary {
+    font-size: 11px;
+}
+
+div.session-row:not(.text-secondary) {
+    font-size: 13px;
+}
+
+button[disabled] {
+    opacity: 0.4;
+}
+
+button[disabled]:hover {
+    background-color: inherit;
+}
+
+.context-menu-icon[disabled] {
+    background-position-y: -41px;
+}
+
+button[selected], button[selected]:hover {
+    background-color: hsla(0, 0%, 100%, 0.1) !important;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+.flex-parent {
+    display: flex;
+}
+
+.flex-fill {
+    display: inline-flex;
+    flex-grow: 1;
+}
+
+.flex-child-text {
+    display: inline-flex;
+    align-items: center;
+}
+
+.session-counts {
+    margin-right: 15px;
+}
+
+#overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: black;
+    z-index: 1001;
+    opacity: 0.3;
+    transition: opacity .1s linear;
+}
