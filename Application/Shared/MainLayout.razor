@@ -11,7 +11,12 @@
 
 @LayoutService.RenderOverlay()
 
-<ContextMenuGroup/>
+<div id="context-menus">
+    @foreach (RenderFragment renderFragment in ContextMenuService.RenderContextMenus())
+    {
+        @renderFragment
+    }
+</div>
 
 <div class="page">
     <div class="sidebar">
