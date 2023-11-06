@@ -13,4 +13,6 @@ public static class ContextMenuId
     public const string OPTIONS = "OptionsContextMenu";
 
     public const string OPEN = "OpenContextMenu";
+
+    public const string SESSION = "SessionContextMenu";
 }
