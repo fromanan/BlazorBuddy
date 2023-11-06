@@ -431,7 +431,7 @@ button[disabled] {
 }
 
 button[disabled]:hover {
-    background-color: inherit;
+    background-color: initial;
 }
 
 .context-menu-icon[disabled] {
