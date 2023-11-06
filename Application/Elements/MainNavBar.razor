@@ -25,11 +25,13 @@
     private void OnCompactLayoutClick(MouseEventArgs args)
     {
         LayoutService.ChangeLayoutStyle(LayoutStyle.Compact);
+        InvokeAsync(StateHasChanged);
     }
 
     private void OnDefaultLayoutClick(MouseEventArgs args)
     {
         LayoutService.ChangeLayoutStyle(LayoutStyle.Default);
+        InvokeAsync(StateHasChanged);
     }
 
     #endregion
