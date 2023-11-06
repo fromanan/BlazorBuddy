@@ -4,9 +4,15 @@ namespace Application.Data;
 
 public class DialogElement
 {
+    #region Data Members
+
     private readonly IJSRuntime _jsRuntime;
 
     private readonly string _id;
+
+    #endregion
+
+    #region Constructor
 
     public DialogElement(IJSRuntime jsRuntime, string id)
     {
@@ -14,6 +20,9 @@ public class DialogElement
         _id = id;
     }
 
+    #endregion
+
+    #region JavaScript Methods
 
     public async void OpenDialog()
     {
@@ -38,4 +47,6 @@ public class DialogElement
         await using IJSObjectReference module = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/dialog.js");
         await module.InvokeVoidAsync("closeDialog", _id);
     }
+
+    #endregion
 }

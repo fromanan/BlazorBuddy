@@ -2,13 +2,21 @@
 
 @code
 {
+    #region Parameters
+
     [Parameter]
     public float Width { get; set; } = 1;
 
     [Parameter]
     public string Unit { get; set; } = "em";
 
+    #endregion
+
+    #region Properties
+
     private string WidthString => $"{Width / 2}{Unit}";
 
     private string StyleString => $"padding-left:{WidthString};padding-right:{WidthString};";
+
+    #endregion
 }

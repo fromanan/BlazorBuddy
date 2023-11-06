@@ -27,17 +27,21 @@
 
 @code
 {
-    public string? SessionName { get; set; }
-
-    private bool NeverAskForName { get; set; }
+    #region Data Members
 
     private ElementReference _confirmButton;
+
+    #endregion
+
+    #region Properties
+
+    public string? SessionName { get; set; }
     
-    public struct SaveSessionResult
-    {
-        public string? Name;
-        public bool NeverAskForName;
-    }
+    private bool NeverAskForName { get; set; }
+
+    #endregion
+
+    #region Overrides
 
     protected override object? GetDialogResult()
     {
@@ -54,6 +58,10 @@
         await _confirmButton.FocusAsync();
     }
 
+    #endregion
+
+    #region Event Handlers
+
     private async void OnOkPressed()
     {
         await CloseModal(true);
@@ -68,4 +76,16 @@
     {
         NeverAskForName = !NeverAskForName;
     }
+
+    #endregion
+    
+    #region Embedded Classes
+
+    public struct SaveSessionResult
+    {
+        public string? Name;
+        public bool NeverAskForName;
+    }
+
+    #endregion
 }

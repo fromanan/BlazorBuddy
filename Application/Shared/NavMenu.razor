@@ -34,12 +34,24 @@
 
 @code
 {
+    #region Data Members
+
     private bool _collapseNavMenu = true;
 
+    #endregion
+
+    #region Properties
+
     private string? NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
+
+    #endregion
+
+    #region Event Handlers
 
     private void ToggleNavMenu()
     {
         _collapseNavMenu = !_collapseNavMenu;
     }
+
+    #endregion
 }

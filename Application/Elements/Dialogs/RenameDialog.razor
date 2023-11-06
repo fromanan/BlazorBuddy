@@ -18,16 +18,21 @@
 
 @code
 {
+    #region Data Members
+
+    private ElementReference _confirmButton;
+
+    #endregion
+
+    #region Properties
+
     public string? SessionName { get; set; }
 
     private bool NeverAskForName { get; set; } = false;
 
-    private ElementReference _confirmButton;
-    
-    public struct NameSessionResult
-    {
-        public string? Name;
-    }
+    #endregion
+
+    #region Overrides
 
     protected override object? GetDialogResult()
     {
@@ -43,6 +48,19 @@
         await _confirmButton.FocusAsync();
     }
 
+    #endregion
+
+    #region Embedded Classes
+
+    public struct NameSessionResult
+    {
+        public string? Name;
+    }
+
+    #endregion
+    
+    #region Event Handlers
+
     private async void OnOkPressed()
     {
         await CloseModal(true);
@@ -52,4 +70,6 @@
     {
         await CancelDialog();
     }
+
+    #endregion
 }

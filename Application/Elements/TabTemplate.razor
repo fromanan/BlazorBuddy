@@ -10,14 +10,22 @@
 
 @code
 {
+    #region Parameters
+
     [Parameter]
     public required Tab Tab { get; init; }
     
     [Parameter]
     public required Action<MouseEventArgs, int> TabCloseAction { get; set; }
 
+    #endregion
+
+    #region Event Handlers
+
     private void OnTabCloseClicked(MouseEventArgs args)
     {
         TabCloseAction(args, Tab.Id);
     }
+
+    #endregion
 }

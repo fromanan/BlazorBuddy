@@ -54,6 +54,8 @@
 
 @code
 {
+    #region Parameters
+
     [Parameter]
     public string? Title { get; set; }
     
@@ -77,7 +79,11 @@
     
     [Parameter]
     public SessionType SessionType { get; set; }
-    
+
+    #endregion
+
+    #region Properties
+
     private string TitleClassString => IsRenameable ? "clickonly" : "nostyle";
     
     private string TimeString => $"{LastChange:g}";
@@ -98,7 +104,11 @@
     private bool IsCurrent => SessionType is SessionType.Current;
 
     private int SessionId => SessionService.SelectedSessionId;
-    
+
+    #endregion
+
+    #region Overrides
+
     protected override void OnInitialized()
     {
         if (SessionType is SessionType.Current && Windows is { Count: > 0 })
@@ -107,7 +117,11 @@
             Windows[0].Title = "Current Window";
         }
     }
-    
+
+    #endregion
+
+    #region Private Methods
+
     private void OnCloseWindow(MouseEventArgs args, int windowId)
     {
         SessionService.CloseWindow(SessionId, windowId);
@@ -152,4 +166,6 @@
             }
         }
     }
+
+    #endregion
 }

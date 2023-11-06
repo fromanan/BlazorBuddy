@@ -2,6 +2,8 @@
 
 public class Window
 {
+    #region Properties
+
     public int Id { get; set; }
 
     public string Title { get; set; } = "Window";
@@ -15,4 +17,6 @@ public class Window
     public int TabCount => Tabs.Count;
 
     public string SelectedWindowClass => $"{(IsCurrentWindow ? "selected-window" : string.Empty)}";
+
+    #endregion
 }

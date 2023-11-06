@@ -2,6 +2,8 @@
 
 @code
 {
+    #region Parameters
+
     [Parameter]
     public bool Hidden { get; set; } = true;
     
@@ -10,8 +12,16 @@
     
     [Parameter]
     public string? Class { get; set; }
+    
+    #endregion
+
+    #region Properties
 
     private string? HiddenString => Hidden ? "hidden" : null;
+
+    #endregion
+
+    #region Public Methods
 
     public void Show()
     {
@@ -24,4 +34,6 @@
         Hidden = true;
         InvokeAsync(StateHasChanged);
     }
+
+    #endregion
 }

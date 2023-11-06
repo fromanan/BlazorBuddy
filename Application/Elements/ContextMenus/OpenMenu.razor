@@ -18,7 +18,13 @@
 
 @code
 {
+    #region Data Members
+
     private int TabCount { get; set; } = 0;
+
+    #endregion
+
+    #region Properties
 
     private string TabCountString => Utils.Pluralize(TabCount, "tab");
     
@@ -26,6 +32,10 @@
     {
         
     }
+
+    #endregion
+
+    #region Event Handlers
 
     private void OpenAllClicked(MouseEventArgs args)
     {
@@ -41,4 +51,6 @@
     {
         BrowserService.OpenTabsInThisWindow();
     }
+
+    #endregion
 }

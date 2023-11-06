@@ -20,6 +20,8 @@
 
 @code
 {
+    #region Event Handlers
+
     private void OnCompactLayoutClick(MouseEventArgs args)
     {
         LayoutService.ChangeLayoutStyle(LayoutStyle.Compact);
@@ -29,4 +31,6 @@
     {
         LayoutService.ChangeLayoutStyle(LayoutStyle.Default);
     }
+
+    #endregion
 }

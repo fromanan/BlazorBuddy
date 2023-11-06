@@ -17,9 +17,15 @@
 
 @code
 {
+    #region Injected
+
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
-    
+
+    #endregion
+
+    #region Parameters
+
     [Parameter]
     public required string Id { get; set; }
     
@@ -32,9 +38,11 @@
     [Parameter]
     public RenderFragment? FooterContent { get; set; }
 
-    private DialogElement _dialogElement = null!;
+    #endregion
 
-    private Action<bool, object?>? ModalResultCallback { get; set; }
+    #region Data Members
+
+    private DialogElement _dialogElement = null!;
     
     // TODO: Create timeout for modals
 
@@ -42,10 +50,24 @@
 
     private TaskCompletionSource<bool> _completionSource = new();
 
+    #endregion
+
+    #region Properties
+
+    private Action<bool, object?>? ModalResultCallback { get; set; }
+
+    #endregion
+
+    #region Overrides
+
     protected override void OnInitialized()
     {
         _dialogElement = new DialogElement(JsRuntime, Id);
     }
+
+    #endregion
+
+    #region Public
 
     public async Task<bool> OpenModalAsync(Action<bool, object?>? callback = null)
     {
@@ -88,6 +110,10 @@
         LayoutService.ShowOverlay();
     }
 
+    #endregion
+
+    #region Protected Methods
+    
     // Passing result lets us manually override a result, if needed by a handler
     protected async Task CloseModal(bool success = false, object? result = null)
     {
@@ -127,4 +153,6 @@
                 break;
         }
     }
+
+    #endregion
 }

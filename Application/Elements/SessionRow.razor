@@ -52,11 +52,17 @@
 
     #endregion
 
+    #region Overrides
+
     protected override void OnParametersSet()
     {
         if (Selected)
             SessionService.SelectionChanged += OnSelectionChanged;
     }
+
+    #endregion
+
+    #region Event Handlers
 
     private void Select()
     {
@@ -72,4 +78,6 @@
         Selected = false;
         SessionService.SelectionChanged -= OnSelectionChanged;
     }
+
+    #endregion
 }

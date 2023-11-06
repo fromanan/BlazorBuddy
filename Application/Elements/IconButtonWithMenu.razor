@@ -9,6 +9,8 @@
 
 @code
 {
+    #region Parameters
+
     [Parameter]
     public MouseButtonTrigger Trigger { get; set; } = MouseButtonTrigger.Left;
     
@@ -17,4 +19,6 @@
     
     [Parameter]
     public string? MenuClass { get; set; }
+
+    #endregion
 }

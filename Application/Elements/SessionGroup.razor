@@ -5,6 +5,8 @@
 
 @code
 {
+    #region Parameters
+
     [Parameter]
     public string? Title { get; init; }
     
@@ -17,5 +19,11 @@
     [Parameter]
     public int MaxDisplayCount { get; set; } = 3;
 
+    #endregion
+
+    #region Properties
+
     public bool Expanded { get; set; }
+
+    #endregion
 }

@@ -28,6 +28,8 @@
 
 @code
 {
+    #region Event Handlers
+
     private async Task OnRenameSession(ItemClickEventArgs args)
     {
         if (await DialogService.ShowDialogAsync(DialogId.Rename))
@@ -65,4 +67,6 @@
     {
         SessionService.OverwriteSession(-1);
     }
+
+    #endregion
 }

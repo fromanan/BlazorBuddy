@@ -21,6 +21,8 @@
 
 @code
 {
+    #region Parameters
+
     [Parameter]
     public required Window Window { get; init; }
     
@@ -29,8 +31,16 @@
     
     [Parameter]
     public required Action<MouseEventArgs, int, int> TabCloseAction { get; set; }
-    
+
+    #endregion
+
+    #region Properties
+
     private MouseButtonTrigger Trigger => MouseButtonTrigger.Right | MouseButtonTrigger.DoubleClick;
+
+    #endregion
+
+    #region Event Handlers
 
     private void OnWindowCloseClicked(MouseEventArgs args)
     {
@@ -41,4 +51,6 @@
     {
         TabCloseAction(args, Window.Id, tabId);
     }
+
+    #endregion
 }
