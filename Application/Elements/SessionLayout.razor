@@ -14,8 +14,7 @@
         <IconButtonWithMenu ContextMenuId="@ContextMenuId.OPEN" Class="open-button" Disabled="@(!IsOpenable)">
             Open
         </IconButtonWithMenu>
-        @* TODO: Disable for Type=Current *@
-        <IconButtonWithMenu ContextMenuId="@ContextMenuId.OPTIONS" IconOnly="@true" Class="options-button">
+        <IconButtonWithMenu ContextMenuId="@ContextMenuId.OPTIONS" IconOnly="@true" Class="options-button" Disabled="@(IsCurrent)">
             Options
         </IconButtonWithMenu>
     </div>
@@ -95,6 +94,8 @@
     private bool IsSaveable => SessionType is not SessionType.Saved;
     
     private bool IsOpenable => SessionType is not SessionType.Current;
+
+    private bool IsCurrent => SessionType is SessionType.Current;
 
     private int SessionId => SessionService.SelectedSessionId;
     
