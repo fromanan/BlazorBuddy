@@ -4,5 +4,6 @@ public enum SessionType
 {
     Current,
     Previous,
-    Saved
+    Saved,
+    Updated
 }

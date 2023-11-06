@@ -48,7 +48,7 @@
 
     private string VerbString => $"{Utils.GetVerb(SessionType)} {Utils.GetTimeString(LastChange)} ago";
 
-    private bool IsSavedSession => SessionType is SessionType.Saved;
+    private bool IsSavedSession => SessionType is SessionType.Saved or SessionType.Updated;
 
     #endregion
 

@@ -89,9 +89,9 @@
         _                       => "Unnamed session"
     };
     
-    private bool IsRenameable => SessionType is SessionType.Saved;
+    private bool IsRenameable => SessionType is SessionType.Saved or SessionType.Updated;
 
-    private bool IsSaveable => SessionType is not SessionType.Saved;
+    private bool IsSaveable => SessionType is not (SessionType.Saved or SessionType.Updated);
     
     private bool IsOpenable => SessionType is not SessionType.Current;
 

@@ -49,7 +49,8 @@ public static class Utils
         {
             SessionType.Current     => "Changed",
             SessionType.Previous    => "Recorded",
-            SessionType.Saved       => "Saved",     // Or updated if changed
+            SessionType.Saved       => "Saved",
+            SessionType.Updated     => "Updated",
             _                       => throw new InvalidEnumArgumentException($"Invalid session type '{type}'")
         };
     }
