@@ -1,4 +1,7 @@
-﻿<ContextMenu Id="@ContextMenuId.SETTINGS">
+﻿@inject IDialogService DialogService
+@inject IFileService FileService
+
+<ContextMenu Id="@ContextMenuId.SETTINGS">
     <Item OnClick="@OnImportClicked">
         Import
     </Item>
@@ -34,7 +37,8 @@
     
     private void OnImportClicked(ItemClickEventArgs args)
     {
-        FileService.Import();
+        //FileService.Import();
+        DialogService.ShowDialog(DialogId.Import);
     }
     
     private void OnExportClicked(ItemClickEventArgs args)

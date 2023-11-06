@@ -1,4 +1,6 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject ISessionService SessionService
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <SearchBar Placeholder="Search sessions" />
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">

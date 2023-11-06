@@ -1,9 +1,15 @@
-﻿namespace Application.Services;
+﻿using Application.Interfaces;
 
-public static class DatabaseService
+namespace Application.Services;
+
+public class DatabaseService : IDatabaseService
 {
+    #region Public Methods
+
     public static void LoadData()
     {
         
     }
+
+    #endregion
 }

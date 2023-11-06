@@ -1,4 +1,6 @@
-﻿<ContextMenu Id="@ContextMenuId.OPEN">
+﻿@inject IBrowserService BrowserService
+
+<ContextMenu Id="@ContextMenuId.OPEN">
     <Item>
         <IconButton Class="icon-open-all context-menu-icon" ClickAction="@OpenAllClicked">
             Open @TabCountString
@@ -27,11 +29,6 @@
     #region Properties
 
     private string TabCountString => Utils.Pluralize(TabCount, "tab");
-    
-    protected override void OnInitialized()
-    {
-        
-    }
 
     #endregion
 

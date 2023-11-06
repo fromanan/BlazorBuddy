@@ -1,3 +1,4 @@
+using Application.Interfaces;
 using Application.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,13 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddSingleton<IBrowserService, BrowserService>();
+builder.Services.AddSingleton<IContextMenuService, ContextMenuService>();
+builder.Services.AddSingleton<IDatabaseService, DatabaseService>();
+builder.Services.AddSingleton<IDialogService, DialogService>();
+builder.Services.AddSingleton<IFileService, FileService>();
+builder.Services.AddSingleton<ILayoutService, LayoutService>();
+builder.Services.AddSingleton<ISessionService, SessionService>();
 builder.Services.AddBlazorContextMenu();
 
 WebApplication app = builder.Build();

@@ -1,4 +1,8 @@
-﻿<ContextMenu Id="@ContextMenuId.OPTIONS">
+﻿@inject IDialogService DialogService
+@inject ISessionService SessionService
+@inject ILayoutService LayoutService
+
+<ContextMenu Id="@ContextMenuId.OPTIONS">
     @* TODO: Disable for Type=Previous *@
     <Item OnClick="@OnRenameSession">
         Rename

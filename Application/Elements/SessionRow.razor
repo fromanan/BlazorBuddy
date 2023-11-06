@@ -1,4 +1,6 @@
-﻿<button @onclick="Select" class="nostyle full nopad">
+﻿@inject ISessionService SessionService
+
+<button @onclick="Select" class="nostyle full nopad">
     <div class="session-row @SelectedString">
         @TitleString
         <br/>

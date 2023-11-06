@@ -1,30 +1,48 @@
 ﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using Application.Data;
 using Application.Elements;
+using Application.Elements.ContextMenus;
+using Application.Extensions;
+using Application.Interfaces;
 using Application.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Application.Services;
 
-public static class SessionService
+public class SessionService : ISessionService
 {
-    private static readonly Dictionary<int, Session> _SessionTable = new();
+    #region Data Members
 
-    public static int SelectedSessionId { get; private set; }
+    private readonly Dictionary<int, Session> _sessionTable = new();
 
-    private static Session SelectedSession => _SessionTable[SelectedSessionId];
+    private WindowMenu? _windowMenu;
+    
+    private int _insertRow;
 
-    private static int _InsertRow;
+    #endregion
     
-    public static event Action<int> SelectionChanged = delegate {  };
+    #region Properties
+
+    public int SelectedSessionId { get; private set; }
+
+    private Session SelectedSession => _sessionTable[SelectedSessionId];
+
+    #endregion
+
+    #region Events
+
+    public event Action<int> SelectionChanged = delegate {  };
     
-    public static event Action SessionsUpdated = delegate {  };
-    
+    public event Action SessionsUpdated = delegate {  };
+
+    #endregion
+
+    #region Sessions
+
     // TODO: This will be replaced with dynamic loading from DB later
     
-    public static readonly Session CurrentSession = new()
+    public readonly Session CurrentSession = new()
     {
         LastChange = DateTime.Now.AddSeconds(-3),
         SessionType = SessionType.Current,
@@ -44,12 +62,26 @@ public static class SessionService
         }
     };
     
-    public static readonly List<Session> PreviousSessions = new()
+    public readonly List<Session> PreviousSessions = new()
     {
         new Session
         {
             LastChange = DateTime.Now.AddMinutes(-44),
-            SessionType = SessionType.Previous
+            SessionType = SessionType.Previous,
+            Windows =
+            {
+                new Window
+                {
+                    Tabs =
+                    {
+                        new Tab
+                        {
+                            Title = "blazor custom component not working - Google Search",
+                            Url = "https://www.google.com/search?q=blazor+custom+component+not+working&ie=UTF-8"
+                        }
+                    }
+                }
+            }
         },
         new Session
         {
@@ -58,17 +90,34 @@ public static class SessionService
         }
     };
     
-    public static readonly List<Session> SavedSessions = new()
+    public readonly List<Session> SavedSessions = new()
     {
         new Session
         {
             LastChange = DateTime.Now.AddHours(-2),
-            SessionType = SessionType.Saved
+            SessionType = SessionType.Saved,
+            Windows =
+            {
+                new Window
+                {
+                    Tabs =
+                    {
+                        new Tab
+                        {
+                            Title = "blazor custom component not working - Google Search",
+                            Url = "https://www.google.com/search?q=blazor+custom+component+not+working&ie=UTF-8"
+                        }
+                    }
+                }
+            }
         }
     };
-    
-    [ModuleInitializer]
-    public static void Init()
+
+    #endregion
+
+    #region Constructor
+
+    public SessionService()
     {
         // Current Session will always have the id = 0
         AddSession(CurrentSession);
@@ -83,52 +132,68 @@ public static class SessionService
             AddSession(session);
         }
     }
+
+    #endregion
     
-    public static void UpdateSelection(int id)
+    #region Public Methods
+
+    public void Initialize(IContextMenuService contextMenuService)
+    {
+        _windowMenu = contextMenuService.GetMenu<WindowMenu>(ContextMenuId.WINDOW);
+    }
+    
+    public void UpdateSelection(int id)
     {
         if (id == SelectedSessionId)
             return;
         SelectedSessionId = id;
         SelectionChanged(id);
+        if (_windowMenu is { } windowMenu)
+        {
+            windowMenu.IsCurrent = SelectedSession.SessionType is SessionType.Current;
+        }
     }
 
-    public static int AddSession(Session session)
+    public int AddSession(Session session)
     {
-        session.Identifier = _InsertRow;
-        _SessionTable.Add(session.Identifier, session);
-        return _InsertRow++;
+        session.Identifier = _insertRow;
+        _sessionTable.Add(session.Identifier, session);
+        return _insertRow++;
     }
     
-    public static RenderFragment RenderSessionGroup(SessionType type)
+    public RenderFragment RenderSessionGroup(SessionType type)
     {
         return _RenderFragment;
 
         void _RenderFragment(RenderTreeBuilder builder)
         {
-            builder.OpenComponent<SessionGroup>(0);
-            builder.AddAttribute(1, nameof(SessionGroup.Title), GetSessionTitle(type));
-            builder.AddAttribute(2, nameof(SessionGroup.SessionType),  type);
-            builder.AddAttribute(3, nameof(SessionGroup.ChildContent), (RenderFragment)(innerBuilder => 
-            {
-                foreach (Session session in GetSessionsByType(type))
-                {
-                    innerBuilder.OpenComponent<SessionRow>(4);
-                    if (session.Title is not null)
-                        innerBuilder.AddAttribute(5, nameof(SessionRow.Title), session.Title);
-                    innerBuilder.AddAttribute(6, nameof(SessionRow.LastChange), session.LastChange);
-                    innerBuilder.AddAttribute(7, nameof(SessionRow.TabCount),   session.TabCount);
-                    innerBuilder.AddAttribute(8, nameof(SessionRow.SessionType),       type);
-                    innerBuilder.AddAttribute(9, nameof(SessionRow.Selected), SelectedSessionId == session.Identifier);
-                    innerBuilder.AddAttribute(10, nameof(SessionRow.Identifier), session.Identifier);
-                    innerBuilder.CloseComponent();
-                }
-            }));
-            
+            builder.OpenComponent<SessionGroup>(sequence: 0);
+            builder.AddAttribute(sequence: 1, nameof(SessionGroup.Title),        value: GetSessionTitle(type));
+            builder.AddAttribute(sequence: 2, nameof(SessionGroup.SessionType),  value: type);
+            builder.AddAttribute(sequence: 3, nameof(SessionGroup.ChildContent), value: (RenderFragment)_RenderChildContent);
             builder.CloseComponent();
+        }
+
+        void _RenderChildContent(RenderTreeBuilder builder)
+        {
+            GetSessionsByType(type).Each(_RenderSessionRow);
+            return;
+                
+            void _RenderSessionRow(Session session)
+            {
+                builder.OpenComponent<SessionRow>(sequence: 4);
+                builder.AddAttribute(sequence: 5, nameof(SessionRow.Title),       value: session.Title);
+                builder.AddAttribute(sequence: 6, nameof(SessionRow.LastChange),  value: session.LastChange);
+                builder.AddAttribute(sequence: 7, nameof(SessionRow.TabCount),    value: session.TabCount);
+                builder.AddAttribute(sequence: 8, nameof(SessionRow.SessionType), value: session.SessionType);
+                builder.AddAttribute(sequence: 9,  nameof(SessionRow.Selected),    value: SelectedSessionId == session.Identifier);
+                builder.AddAttribute(sequence: 10, nameof(SessionRow.Identifier),  value: session.Identifier);
+                builder.CloseComponent();
+            }
         }
     }
 
-    public static RenderFragment RenderSelectedSession()
+    public RenderFragment RenderSelectedSession()
     {
         Session session = SelectedSession;
         
@@ -136,41 +201,18 @@ public static class SessionService
 
         void _RenderFragment(RenderTreeBuilder builder)
         {
-            builder.OpenComponent<SessionLayout>(0);
-            if (session.Title is not null)
-                builder.AddAttribute(1, nameof(SessionLayout.Title), session.Title);
-            builder.AddAttribute(2, nameof(SessionLayout.WindowCount),  session.Windows.Count);
-            builder.AddAttribute(3, nameof(SessionLayout.TabCount),     session.TabCount);
-            builder.AddAttribute(4, nameof(SessionLayout.LastChange),   session.LastChange);
-            builder.AddAttribute(5, nameof(SessionLayout.Windows),      session.Windows);
-            builder.AddAttribute(6, nameof(SessionLayout.SessionType),  session.SessionType);
+            builder.OpenComponent<SessionLayout>(sequence: 0);
+            builder.AddAttribute(sequence: 1, nameof(SessionLayout.Title),       value: session.Title);
+            builder.AddAttribute(sequence: 2, nameof(SessionLayout.WindowCount), value: session.Windows.Count);
+            builder.AddAttribute(sequence: 3, nameof(SessionLayout.TabCount),    value: session.TabCount);
+            builder.AddAttribute(sequence: 4, nameof(SessionLayout.LastChange),  value: session.LastChange);
+            builder.AddAttribute(sequence: 5, nameof(SessionLayout.Windows),     value: session.Windows);
+            builder.AddAttribute(sequence: 6, nameof(SessionLayout.SessionType), value: session.SessionType);
             builder.CloseComponent();
         }
     }
-
-    private static string GetSessionTitle(SessionType type)
-    {
-        return type switch
-        {
-            SessionType.Current  => "Current Session",
-            SessionType.Previous => "Previous Sessions",
-            SessionType.Saved    => "Saved Sessions",
-            _                    => throw new InvalidEnumArgumentException($"Invalid session type '{type}'")
-        };
-    }
-
-    private static IEnumerable<Session> GetSessionsByType(SessionType type)
-    {
-        return type switch
-        {
-            SessionType.Current  => new [] { CurrentSession },
-            SessionType.Previous => PreviousSessions,
-            SessionType.Saved    => SavedSessions,
-            _                    => throw new InvalidEnumArgumentException($"Invalid session type '{type}'")
-        };
-    }
-
-    public static void SaveCurrentSession(string? name = null)
+    
+    public void SaveCurrentSession(string? name = null)
     {
         Session session = CurrentSession.Copy();
         session.Title = name ?? "Unnamed session";
@@ -180,58 +222,93 @@ public static class SessionService
         SessionsUpdated();
     }
 
-    public static void CloseSession(int sessionId)
+    public void CloseSession(int sessionId)
     {
         Console.WriteLine("Closing session!");
     }
 
-    public static void CloseWindow(int sessionId, int windowId)
+    public void CloseWindow(int sessionId, int windowId)
     {
         Console.WriteLine("Closing window!");
     }
 
-    public static void SaveAndCloseWindow(int sessionId, int windowId)
+    public void SaveAndCloseWindow(int sessionId, int windowId)
     {
         Console.WriteLine("Saving & Closing window!");
     }
 
-    public static void CloseTab(int sessionId, int windowId, int tabId)
+    public void CloseTab(int sessionId, int windowId, int tabId)
     {
         Console.WriteLine("Closing tab!");
     }
 
-    public static void RenameWindow(int sessionId, int windowId, string? newName)
+    public void RenameWindow(int sessionId, int windowId, string? newName)
     {
         Console.WriteLine("Renaming window!");
     }
 
-    public static void RenameSession(int sessionId, string? newName)
+    public void RenameSession(int sessionId, string? newName)
     {
         Console.WriteLine("Renaming session!");
     }
 
-    public static void DuplicateSession(int sessionId, string? newName)
+    public void DuplicateSession(int sessionId, string? newName)
     {
         Console.WriteLine("Duplicating session!");
     }
 
-    public static void DeleteSession(int sessionId)
+    public void DeleteSession(int sessionId)
     {
         Console.WriteLine("Deleting session!");
     }
 
-    public static void UnifyWindows(int sessionId)
+    public void UnifyWindows(int sessionId)
     {
         Console.WriteLine("Unifying windows!");
     }
 
-    public static void OverwriteSession(int sessionId, int otherSessionId = -1)
+    public void OverwriteSession(int sessionId, int otherSessionId = -1)
     {
         Console.WriteLine("Overwriting session!");
     }
 
-    public static void SaveSession(int sessionId)
+    public void SaveSession(int sessionId)
     {
         Console.WriteLine("Saving session!");
     }
+
+    public void ImportSession(string fileContents)
+    {
+        Console.WriteLine("Importing session!");
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    private string GetSessionTitle(SessionType type)
+    {
+        return type switch
+        {
+            SessionType.Current  => "Current Session",
+            SessionType.Previous => "Previous Sessions",
+            SessionType.Saved    => "Saved Sessions",
+            SessionType.Updated  => "Saved Sessions",
+            _                    => throw new InvalidEnumArgumentException($"Invalid session type '{type}'")
+        };
+    }
+
+    private IEnumerable<Session> GetSessionsByType(SessionType type)
+    {
+        return type switch
+        {
+            SessionType.Current  => new [] { CurrentSession },
+            SessionType.Previous => PreviousSessions,
+            SessionType.Saved    => SavedSessions,
+            SessionType.Updated  => SavedSessions,
+            _                    => throw new InvalidEnumArgumentException($"Invalid session type '{type}'")
+        };
+    }
+
+    #endregion
 }

@@ -1,4 +1,7 @@
-﻿<div class="session-title-bar flex-parent">
+﻿@inject ISessionService SessionService
+@inject IDialogService DialogService
+
+<div class="session-title-bar flex-parent">
     <div class="page-title flex-child-text">
         <a class="@TitleClassString" @onclick="@OnRenameSession">
             <h1>@TitleString</h1>

@@ -1,26 +1,46 @@
 ﻿using Application.Data;
 using Application.Elements.ContextMenus;
+using Application.Interfaces;
 using BlazorContextMenu;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
 namespace Application.Services;
 
-public static class ContextMenuService
+public class ContextMenuService : IContextMenuService
 {
-    private static readonly Dictionary<string, RenderFragment> _ContextMenus = new()
+    #region Data Members
+
+    private static readonly Dictionary<string, RenderFragment> _ContextMenuFragments = new()
     {
-        { ContextMenuId.WINDOW,     RenderMenu<WindowMenu>()   },
-        { ContextMenuId.MAIN,       RenderMenu<MainMenu>()     },
-        { ContextMenuId.SETTINGS,   RenderMenu<SettingsMenu>() },
-        { ContextMenuId.OPEN,       RenderMenu<OpenMenu>()     },
-        { ContextMenuId.OPTIONS,    RenderMenu<OptionsMenu>()  }
+        { ContextMenuId.MAIN,       RenderMenu<MainMenu>(ContextMenuId.MAIN)         },
+        { ContextMenuId.SETTINGS,   RenderMenu<SettingsMenu>(ContextMenuId.SETTINGS) },
+        { ContextMenuId.WINDOW,     RenderMenu<WindowMenu>(ContextMenuId.WINDOW)     },
+        { ContextMenuId.OPEN,       RenderMenu<OpenMenu>(ContextMenuId.OPEN)         },
+        { ContextMenuId.OPTIONS,    RenderMenu<OptionsMenu>(ContextMenuId.OPTIONS)   },
+        { ContextMenuId.SESSION,    RenderMenu<SessionMenu>(ContextMenuId.SESSION)   }
+    };
+    
+    private static readonly Dictionary<string, object?> _ContextMenus = new()
+    {
+        { ContextMenuId.MAIN,       null },
+        { ContextMenuId.SETTINGS,   null },
+        { ContextMenuId.WINDOW,     null },
+        { ContextMenuId.OPEN,       null },
+        { ContextMenuId.OPTIONS,    null },
+        { ContextMenuId.SESSION,    null }
     };
 
-    public static RenderFragment RegisterNewMenu(string id, MouseButtonTrigger trigger, string? cssClass = null, 
+    #endregion
+
+    #region Public Methods
+
+    public T? GetMenu<T>(string id) => (T?) _ContextMenus[id];
+
+    public RenderFragment RegisterNewMenu(string id, MouseButtonTrigger trigger, string? cssClass = null, 
         RenderFragment? childContent = null)
     {
-        if (!_ContextMenus.ContainsKey(id))
+        if (!_ContextMenuFragments.ContainsKey(id))
             throw new KeyNotFoundException($"Menu with id='{id}' not registered!");
 
         return _RenderFragment;
@@ -37,29 +57,39 @@ public static class ContextMenuService
         }
     }
 
-    public static RenderFragment RenderContextMenu(string id)
+    public RenderFragment RenderContextMenu(string id)
     {
-        return _ContextMenus[id];
+        return _ContextMenuFragments[id];
     }
     
-    public static IEnumerable<RenderFragment> RenderContextMenus(params string[] ids)
+    public IEnumerable<RenderFragment> RenderContextMenus(params string[] ids)
     {
-        return ids.Length <= 0 ? _ContextMenus.Values : ids.Select(id => _ContextMenus[id]);
+        return ids.Length <= 0 ? _ContextMenuFragments.Values : ids.Select(id => _ContextMenuFragments[id]);
     }
     
-    public static IEnumerable<RenderFragment> RenderAllContextMenus()
+    public IEnumerable<RenderFragment> RenderAllContextMenus()
     {
-        return _ContextMenus.Values;
+        return _ContextMenuFragments.Values;
     }
-    
-    public static RenderFragment RenderMenu<T>() where T : IComponent
+
+    #endregion
+
+    #region Private Methods
+
+    private static RenderFragment RenderMenu<T>(string id) where T : IComponent
     {
         return _RenderFragment;
 
         void _RenderFragment(RenderTreeBuilder builder)
         {
             builder.OpenComponent<T>(1);
+            builder.AddComponentReferenceCapture(2, componentReference =>
+            {
+                _ContextMenus[id] = componentReference;
+            });
             builder.CloseComponent();
         }
     }
+
+    #endregion
 }

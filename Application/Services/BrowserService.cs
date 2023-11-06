@@ -1,19 +1,25 @@
-﻿namespace Application.Services;
+﻿using Application.Interfaces;
 
-public static class BrowserService
+namespace Application.Services;
+
+public class BrowserService : IBrowserService
 {
-    public static void OpenAllTabs()
+    #region Public Methods
+
+    public void OpenAllTabs()
     {
         Console.WriteLine("Opening all tabs!");
     }
 
-    public static void OpenTabsInOneWindow()
+    public void OpenTabsInOneWindow()
     {
         Console.WriteLine("Opening tabs in one window!");
     }
 
-    public static void OpenTabsInThisWindow()
+    public void OpenTabsInThisWindow()
     {
         Console.WriteLine("Opening tabs in this window!");
     }
+
+    #endregion
 }

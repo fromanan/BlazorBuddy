@@ -1,17 +1,33 @@
 ﻿using Application.Data;
-using Application.Elements;
+using Application.Interfaces;
+using Application.Models;
+/*using Application.Elements;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.AspNetCore.Components.Rendering;*/
 
 namespace Application.Services;
 
-public static class LayoutService
+public class LayoutService : ILayoutService
 {
-    public static LayoutStyle ActiveLayoutStyle { get; private set; } = LayoutStyle.Default;
+    #region Properties
+
+    public LayoutStyle ActiveLayoutStyle { get; private set; } = LayoutStyle.Default;
     
-    public static event Action<LayoutStyle> LayoutStyleChanged = delegate {  };
+    public SortOrder ActiveSortOrder { get; private set; } = SortOrder.Default;
+
+    #endregion
+
+    #region Events
+
+    public event Action<LayoutStyle> LayoutStyleChanged = delegate {  };
     
-    public static void ChangeLayoutStyle(LayoutStyle layoutStyle)
+    public event Action<SortOrder> SortOrderChanged = delegate {  };
+
+    #endregion
+
+    #region Public Methods
+
+    public void ChangeLayoutStyle(LayoutStyle layoutStyle)
     {
         if (ActiveLayoutStyle == layoutStyle)
             return;
@@ -21,12 +37,8 @@ public static class LayoutService
         ActiveLayoutStyle = layoutStyle;
         LayoutStyleChanged(layoutStyle);
     }
-    
-    public static SortOrder ActiveSortOrder { get; private set; } = SortOrder.Default;
-    
-    public static event Action<SortOrder> SortOrderChanged = delegate {  };
 
-    public static void ChangeSortOrder(SortOrder sortOrder = SortOrder.Default)
+    public void ChangeSortOrder(SortOrder sortOrder = SortOrder.Default)
     {
         if (ActiveSortOrder == sortOrder)
             return;
@@ -36,10 +48,34 @@ public static class LayoutService
         ActiveSortOrder = sortOrder;
         SortOrderChanged(sortOrder);
     }
+    
+    public Session GetSessionByPosition(double x, double y)
+    {
+        return null!;
+    }
 
-    private static Overlay? _Overlay;
+    public Window GetWindowByPosition(double x, double y)
+    {
+        return null!;
+    }
 
-    public static RenderFragment RenderOverlay()
+    public Tab GetTabByPosition(double x, double y)
+    {
+        return null!;
+    }
+
+    public void FocusWindow(int windowId)
+    {
+        
+    }
+
+    #endregion
+
+    #region Overlay
+
+    /*private Overlay? _Overlay;
+
+    public RenderFragment RenderOverlay()
     {
         return _RenderFragment;
 
@@ -55,18 +91,15 @@ public static class LayoutService
         }
     }
 
-    public static void ShowOverlay()
+    public void ShowOverlay()
     {
         _Overlay?.Show();
     }
 
-    public static void HideOverlay()
+    public void HideOverlay()
     {
         _Overlay?.Hide();
-    }
+    }*/
 
-    public static void FocusWindow(int windowId)
-    {
-        
-    }
+    #endregion
 }

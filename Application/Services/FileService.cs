@@ -1,19 +1,26 @@
-﻿namespace Application.Services;
+﻿using Application.Interfaces;
+using Application.Models;
 
-public static class FileService
+namespace Application.Services;
+
+public class FileService : IFileService
 {
-    public static void Import()
+    #region Public Methods
+
+    public IEnumerable<Session> Import()
     {
-        
+        return Array.Empty<Session>();
     }
 
-    public static void Export()
+    public string Export()
     {
-        
+        return string.Empty;
     }
 
-    public static void Backup()
+    public string Backup()
     {
-        
+        return string.Empty;
     }
+
+    #endregion
 }

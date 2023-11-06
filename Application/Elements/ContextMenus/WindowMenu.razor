@@ -1,22 +1,86 @@
-﻿<ContextMenu Id="@ContextMenuId.WINDOW">
-    <Item OnClick="@OnSaveClicked">
-        Save
-    </Item>
-    <Item OnClick="@OnSaveCloseClicked">
-        Save & Close
-    </Item>
-    <Separator/>
-    <Item OnClick="@OnFocusClicked">
-        Focus
-    </Item>
-    <Separator/>
-    <Item OnClick="@OnCloseClicked">
-        Close
-    </Item>
+﻿@inject ISessionService SessionService
+@inject IDialogService DialogService
+@inject ILayoutService LayoutService
+
+<ContextMenu Id="@ContextMenuId.WINDOW">
+    <div id="window-current-menu" hidden="@(!IsCurrent)">
+        <Item OnClick="@OnSaveClicked">
+            Save
+        </Item>
+        <Item OnClick="@OnSaveCloseClicked">
+            Save & Close
+        </Item>
+        <Separator/>
+        <Item OnClick="@OnFocusClicked">
+            Focus
+        </Item>
+        <Separator/>
+        <Item OnClick="@OnCloseClicked">
+            Close
+        </Item>
+    </div>
+    <div id="window-other-menu" hidden="@(IsCurrent)">
+        <Item OnClick="@OnCopyClicked">
+            Copy to New Session
+        </Item>
+        <Item OnClick="@OnMoveClicked">
+            Move to New Session
+        </Item>
+        <Separator/>
+        <Item OnClick="@OnOpenClicked">
+            Open
+        </Item>
+        <Item OnClick="@OnOpenIncognitoClicked">
+            Open Incognito
+        </Item>
+        <Item OnClick="@OnOpenTabsClicked">
+            Open Tabs
+        </Item>
+        <Separator/>
+        <Item OnClick="@OnRenameClicked">
+            Rename
+        </Item>
+        <Item OnClick="@OnMakeIncognitoClicked" hidden="@(!IsIncognito)">
+            Make Incognito
+        </Item>
+        <Item OnClick="@OnRemoveIncognitoClicked" hidden="@(IsIncognito)">
+            Remove Incognito
+        </Item>
+        <Separator/>
+        <Item OnClick="@OnDeleteClicked">
+            Delete
+        </Item>
+    </div>
 </ContextMenu>
 
 @code
 {
+    #region Properties
+
+    public bool IsCurrent { get; set; } = true;
+
+    public bool IsIncognito { get; set; }
+
+    #endregion
+
+    #region Event Handlers
+    
+    private void OnModalSubmit(bool success, object? result)
+    {
+        if (!success)
+            return;
+        
+        switch (result)
+        {
+            case SaveModal.SaveSessionResult saveSessionResult:
+            {
+                SessionService.SaveCurrentSession(saveSessionResult.Name);
+                InvokeAsync(StateHasChanged);
+                return;
+            }
+        }
+    }
+
     private async Task OnSaveClicked(ItemClickEventArgs args)
     {
         await DialogService.ShowDialogAsync(DialogId.Save, OnModalSubmit);
@@ -39,20 +103,51 @@
     {
         SessionService.CloseWindow(-1, -1);
     }
-    
-    private void OnModalSubmit(bool success, object? result)
+
+    private void OnCopyClicked(ItemClickEventArgs args)
     {
-        if (!success)
-            return;
         
-        switch (result)
-        {
-            case SaveModal.SaveSessionResult saveSessionResult:
-            {
-                SessionService.SaveCurrentSession(saveSessionResult.Name);
-                InvokeAsync(StateHasChanged);
-                return;
-            }
-        }
     }
+
+    private void OnMoveClicked(ItemClickEventArgs args)
+    {
+        
+    }
+
+    private void OnOpenClicked(ItemClickEventArgs args)
+    {
+        
+    }
+
+    private void OnOpenIncognitoClicked(ItemClickEventArgs args)
+    {
+        
+    }
+
+    private void OnOpenTabsClicked(ItemClickEventArgs args)
+    {
+        
+    }
+
+    private void OnRenameClicked(ItemClickEventArgs args)
+    {
+        
+    }
+
+    private void OnMakeIncognitoClicked(ItemClickEventArgs args)
+    {
+        
+    }
+
+    private void OnRemoveIncognitoClicked(ItemClickEventArgs args)
+    {
+        
+    }
+
+    private void OnDeleteClicked(ItemClickEventArgs args)
+    {
+        
+    }
+
+    #endregion
 }
