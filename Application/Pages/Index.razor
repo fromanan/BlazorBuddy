@@ -8,6 +8,16 @@
 {
     protected override void OnInitialized()
     {
+        SubscribeListeners();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        SessionService.Initialize(ContextMenuService);
+    }
+
+    private void SubscribeListeners()
+    {
         SessionService.SelectionChanged     += UpdateView;
         SessionService.SessionsUpdated      += UpdateView;
         LayoutService.LayoutStyleChanged    += UpdateView;
