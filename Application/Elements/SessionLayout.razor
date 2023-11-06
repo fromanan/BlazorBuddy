@@ -134,6 +134,8 @@
 
     private async Task OnRenameSession(MouseEventArgs args)
     {
+        if (!IsRenameable)
+            return;
         await DialogService.ShowDialogAsync(DialogId.Rename);
     }
 
