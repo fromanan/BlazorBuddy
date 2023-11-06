@@ -7,6 +7,8 @@ public class Window
     public string Title { get; set; } = "Window";
     
     public bool IsCurrentWindow { get; set; }
+    
+    public bool IsIncognito { get; set; }
 
     public List<Tab> Tabs { get; set; } = new();
     
