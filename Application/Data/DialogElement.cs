@@ -14,13 +14,26 @@ public class DialogElement
         _id = id;
     }
 
-    public async Task OpenDialog()
+
+    public async void OpenDialog()
     {
         await using IJSObjectReference module = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/dialog.js");
         await module.InvokeVoidAsync("openDialog", _id);
     }
 
-    public async Task CloseDialog()
+    public async void CloseDialog()
+    {
+        await using IJSObjectReference module = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/dialog.js");
+        await module.InvokeVoidAsync("closeDialog", _id);
+    }
+
+    public async Task OpenDialogAsync()
+    {
+        await using IJSObjectReference module = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/dialog.js");
+        await module.InvokeVoidAsync("openDialog", _id);
+    }
+
+    public async Task CloseDialogAsync()
     {
         await using IJSObjectReference module = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/dialog.js");
         await module.InvokeVoidAsync("closeDialog", _id);
