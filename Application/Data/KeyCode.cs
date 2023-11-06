@@ -2,9 +2,9 @@
 
 public static class KeyCode
 {
-    public const string Enter = "Enter";
-    public const string Tab = "Tab";
-    public const string Accept = "Accept";
-    public const string Escape = "Escape";
-    public const string Cancel = "Cancel";
+    public const string ENTER = "Enter";
+    public const string TAB = "Tab";
+    public const string ACCEPT = "Accept";
+    public const string ESCAPE = "Escape";
+    public const string CANCEL = "Cancel";
 }

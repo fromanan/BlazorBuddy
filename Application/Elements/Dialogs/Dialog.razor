@@ -143,12 +143,12 @@
     {
         switch (args.Key)
         {
-            case KeyCode.Enter:
-            case KeyCode.Accept:
+            case KeyCode.ENTER:
+            case KeyCode.ACCEPT:
                 await CloseModal(true);
                 break;
-            case KeyCode.Escape:
-            case KeyCode.Cancel:
+            case KeyCode.ESCAPE:
+            case KeyCode.CANCEL:
                 await CancelDialog();
                 break;
         }
