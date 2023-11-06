@@ -73,7 +73,7 @@
     {
         _completionSource = new TaskCompletionSource<bool>(_tokenSource);
 
-        await _dialogElement.OpenDialog();
+        await _dialogElement.OpenDialogAsync();
         
         ModalResultCallback = _AsyncCallback;
         
@@ -96,18 +96,16 @@
             {
                 await Task.Run(() => callback?.Invoke(success, result ?? (success ? GetDialogResult() : null)));
             }
-            
-            LayoutService.ShowOverlay();
         }
     }
     
     public void OpenModal(Action<bool, object?>? callback = null)
     {
+        _dialogElement.OpenDialog();
+        
         ModalResultCallback = callback;
         
         InvokeAsync(StateHasChanged);
-        
-        LayoutService.ShowOverlay();
     }
 
     #endregion
@@ -117,7 +115,7 @@
     // Passing result lets us manually override a result, if needed by a handler
     protected async Task CloseModal(bool success = false, object? result = null)
     {
-        await _dialogElement.CloseDialog();
+        await _dialogElement.CloseDialogAsync();
 
         if (ModalResultCallback is not null)
         {
@@ -125,8 +123,6 @@
         }
         
         await InvokeAsync(StateHasChanged);
-        
-        LayoutService.HideOverlay();
     }
 
     protected async Task CancelDialog()
