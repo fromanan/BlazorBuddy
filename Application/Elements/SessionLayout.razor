@@ -166,6 +166,12 @@
                 InvokeAsync(StateHasChanged);
                 return;
             }
+            case ImportDialog.ImportFileResult importFileResult:
+            {
+                SessionService.ImportSession(importFileResult.FileContents);
+                InvokeAsync(StateHasChanged);
+                return;
+            }
         }
     }
 

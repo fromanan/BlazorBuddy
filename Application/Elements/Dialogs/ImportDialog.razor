@@ -1,0 +1,93 @@
+﻿@inherits Dialog
+
+<Dialog Id="@DialogId.Import" Title="Import">
+    <BodyContent>
+        <div class="flex-fill">
+            <textarea id="@Id-file-contents" @bind="@FileContents" spellcheck="false" placeholder="@PlaceholderText" wrap="hard" rows="10"></textarea>
+        </div>
+    </BodyContent>
+    <FooterContent>
+        <button type="button" @onclick="@OnSelectFilePressed" class="highlight">Select File</button>
+        <FlexSpacer/>
+        <div class="dialog-buttons">
+            <button type="button" @ref="@_confirmButton" @onclick="@OnSavePressed" class="highlight" disabled="@FileContents.IsNullOrEmpty().ToWeb()">Save</button>
+            <button type="button" @onclick="@OnCancelPressed" class="highlight">Cancel</button>
+        </div>
+    </FooterContent>
+</Dialog>
+
+@code
+{
+    #region Data Members
+
+    private ElementReference _confirmButton;
+
+    #endregion
+
+    #region Properties
+
+    public string? FileContents { get; set; }
+
+    private string PlaceholderText => "paste text or drop a text file";
+
+    #endregion
+    
+    #region Overrides
+
+    protected override object? GetDialogResult()
+    {
+    // ReSharper disable once HeapView.BoxingAllocation
+        return new ImportFileResult
+        {
+            FileContents = FileContents ?? string.Empty
+        };
+    }
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        await _confirmButton.FocusAsync();
+    }
+
+    #endregion
+
+    #region Embedded Classes
+
+    public struct ImportFileResult
+    {
+        public string FileContents;
+    }
+
+    #endregion
+    
+    #region Event Handlers
+
+    private async void OnSelectFilePressed()
+    {
+        if (await OpenFileDialog() is { } fileContents)
+        {
+            FileContents = fileContents;
+            await CloseModal(true);
+        }
+    }
+
+    private async void OnSavePressed()
+    {
+        await CloseModal(true);
+    }
+
+    private async void OnCancelPressed()
+    {
+        await CancelDialog();
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    private async Task<string?> OpenFileDialog()
+    {
+        return string.Empty;
+    }
+
+    #endregion
+}
