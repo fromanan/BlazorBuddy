@@ -11,9 +11,11 @@ namespace Application.Models;
 public class Session : IEntity<Session>
 {
     #region Data Members
+    
+    public const string DEFAULT_NAME = "Unnamed session";
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity), Key, Column("id")]
-    public int Id { get; set; }
+    public int Id { get; set; } = -1;
     
     [Column("title")]
     public string? Title { get; set; }

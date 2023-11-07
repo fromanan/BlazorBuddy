@@ -74,7 +74,7 @@
         {
             case SaveModal.SaveSessionResult saveSessionResult:
             {
-                SessionService.SaveCurrentSession(saveSessionResult.Name);
+                SessionService.SaveSession(-1, saveSessionResult.Name);
                 InvokeAsync(StateHasChanged);
                 return;
             }
@@ -88,10 +88,7 @@
 
     private async Task OnSaveCloseClicked(ItemClickEventArgs args)
     {
-        if (await DialogService.ShowDialogAsync(DialogId.Save, OnModalSubmit))
-        {
-            SessionService.SaveAndCloseWindow(-1, -1);
-        }
+        await DialogService.ShowDialogAsync(DialogId.Save, OnModalSubmit);
     }
 
     private void OnFocusClicked(ItemClickEventArgs args)

@@ -6,6 +6,8 @@ public interface IDatabaseService
 {
     #region Methods
 
+    Task Initialize();
+
     void AddSession(Session session);
 
     void AddWindow(Window window);

@@ -10,6 +10,12 @@ public class DatabaseService : IDatabaseService, IDisposable, IAsyncDisposable
     #region Data Members
 
     private readonly SessionContext _context;
+    
+    private int _insertRowSessions;
+    
+    private int _insertRowWindows;
+    
+    private int _insertRowTabs;
 
     #endregion
     
@@ -18,26 +24,41 @@ public class DatabaseService : IDatabaseService, IDisposable, IAsyncDisposable
     public DatabaseService(SessionContext context)
     {
         _context = context;
+        
     }
 
     #endregion
     
     #region Public Methods
+    
+    public async Task Initialize()
+    {
+        _insertRowSessions = await _context.GetCurrentId(typeof(Session));
+        _insertRowWindows = await _context.GetCurrentId(typeof(Window));
+        _insertRowTabs = await _context.GetCurrentId(typeof(Tab));
+
+        // Reserve 0 for CurrentSession
+        if (_insertRowSessions is 0)
+            _insertRowSessions++;
+    }
 
     public void AddSession(Session session)
     {
+        session.Id = _insertRowSessions++;
         _context.Sessions.Add(session);
         session.Windows.Each(AddWindow);
     }
 
     public void AddWindow(Window window)
     {
+        window.Id = _insertRowWindows++;
         _context.Windows.Add(window);
         window.Tabs.Each(AddTab);
     }
 
     public void AddTab(Tab tab)
     {
+        tab.Id = _insertRowTabs++;
         _context.Tabs.Add(tab);
     }
 

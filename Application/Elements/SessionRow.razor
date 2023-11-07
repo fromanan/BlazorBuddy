@@ -44,7 +44,7 @@
 
     private string TabString => Utils.Pluralize(TabCount, "Tab");
     
-    private string TitleString => Title ?? (IsSavedSession ? "Unnamed session" : VerbString);
+    private string TitleString => Title ?? (IsSavedSession ? Session.DEFAULT_NAME : VerbString);
 
     private string SelectedString => Selected ? "selected-session" : string.Empty;
 

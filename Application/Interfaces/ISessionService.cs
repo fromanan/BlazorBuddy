@@ -26,7 +26,7 @@ public interface ISessionService
 
     void UpdateSelection(int id);
 
-    int AddSession(Session session);
+    void AddSession(Session session);
 
     RenderFragment RenderSessionGroup(SessionType type);
 

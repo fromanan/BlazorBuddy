@@ -17,7 +17,7 @@
         <IconButtonWithMenu ContextMenuId="@ContextMenuId.OPEN" Class="open-button" Disabled="@(!IsOpenable)">
             Open
         </IconButtonWithMenu>
-        <IconButtonWithMenu ContextMenuId="@ContextMenuId.OPTIONS" IconOnly="@true" Class="options-button" Disabled="@(IsCurrent)">
+        <IconButtonWithMenu ContextMenuId="@ContextMenuId.OPTIONS" IconOnly="true" Class="options-button" Disabled="@(IsCurrent)">
             Options
         </IconButtonWithMenu>
     </div>
@@ -95,7 +95,7 @@
     {
         SessionType.Current     => "Current Session",
         SessionType.Previous    => "Previous Session",
-        _                       => "Unnamed session"
+        _                       => Session.DEFAULT_NAME
     };
     
     private bool IsRenameable => SessionType is SessionType.Saved or SessionType.Updated;

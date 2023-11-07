@@ -13,12 +13,12 @@ namespace Application.Services;
 public class SessionService : ISessionService
 {
     #region Data Members
+    
+    private IDatabaseService _databaseService = null!;
 
     private readonly Dictionary<int, Session> _sessionTable = new();
 
     private WindowMenu? _windowMenu;
-    
-    private int _insertRow;
 
     #endregion
     
@@ -39,11 +39,10 @@ public class SessionService : ISessionService
     #endregion
 
     #region Sessions
-
-    // TODO: This will be replaced with dynamic loading from DB later
     
     public readonly Session CurrentSession = new()
     {
+        Id = 0,
         LastChange = DateTime.Now.AddSeconds(-3),
         SessionType = SessionType.Current,
         Windows =
@@ -98,31 +97,22 @@ public class SessionService : ISessionService
 
     public SessionService()
     {
-        // Current Session will always have the id = 0
         AddSession(CurrentSession);
-
-        foreach (Session session in PreviousSessions)
-        {
-            AddSession(session);
-        }
-
-        foreach (Session session in SavedSessions)
-        {
-            AddSession(session);
-        }
     }
 
     #endregion
     
     #region Public Methods
 
-    private IDatabaseService _databaseService = null!;
-
     public void Initialize(IContextMenuService contextMenuService, IDatabaseService databaseService)
     {
         _windowMenu = contextMenuService.GetMenu<WindowMenu>(ContextMenuId.WINDOW);
         _databaseService = databaseService;
         _databaseService.GetSessions().Each(InsertSession);
+        
+        // TODO: Defaults, Remove
+        PreviousSessions.Each(AddSession);
+        SavedSessions.Each(AddSession);
     }
     
     public void UpdateSelection(int id)
@@ -137,11 +127,11 @@ public class SessionService : ISessionService
         }
     }
 
-    public int AddSession(Session session)
+    public void AddSession(Session session)
     {
-        session.Id = _insertRow;
+        if (session.Id < 0)
+            _databaseService.AddSession(session);
         _sessionTable.Add(session.Id, session);
-        return _insertRow++;
     }
     
     public void SaveCurrentSession(string? name = null)
@@ -201,7 +191,7 @@ public class SessionService : ISessionService
 
     public void SaveSession(int sessionId, string? name = null)
     {
-        if (!_sessionTable.ContainsKey(sessionId))
+        if (!Exists(sessionId))
             return;
         SaveSession(_sessionTable[sessionId]);
     }
@@ -211,7 +201,7 @@ public class SessionService : ISessionService
         Console.WriteLine("Saving session!");
 
         Session newSession = session.Copy();
-        newSession.Title = name ?? "Unnamed session";
+        newSession.Title = name ?? Session.DEFAULT_NAME;
         newSession.Created = DateTime.Now;
         newSession.SessionType = SessionType.Saved;
 
@@ -226,10 +216,12 @@ public class SessionService : ISessionService
     #endregion
 
     #region Private Methods
+    
+    private bool Exists(int sessionId) => _sessionTable.ContainsKey(sessionId);
 
     private void InsertSession(Session session)
     {
-        if ((session.Id is { } id && _sessionTable.ContainsKey(id)) || AddSession(session) is -1)
+        if (Exists(session.Id))
             return;
         
         switch (session.SessionType)
@@ -245,12 +237,12 @@ public class SessionService : ISessionService
             default:
                 throw new InvalidEnumArgumentException();
         }
-        
-        _databaseService.AddSession(session);
+
+        AddSession(session);
         SessionsUpdated();
     }
 
-    private string GetSessionTitle(SessionType type)
+    private static string GetSessionTitle(SessionType type)
     {
         return type switch
         {

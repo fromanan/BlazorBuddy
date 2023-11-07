@@ -1,4 +1,6 @@
-﻿using Application.Models;
+﻿using System.Data;
+using Application.Models;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -33,6 +35,31 @@ public class SessionContext : DbContext
     public async Task Initialize()
     {
         await Database.EnsureCreatedAsync();
+    }
+
+    public async Task<int> GetCurrentId(Type entityType)
+    {
+        /*SqliteParameter[] @params =
+        {
+            new("@returnVal", SqliteType.Integer)
+            {
+                Direction = ParameterDirection.Output
+            },
+            new("@tableName", SqliteType.Text)
+            {
+                Direction = ParameterDirection.Input
+            }
+        };
+
+        SqliteCommand command = new("@returnVal = select seq from sqlite_sequence where name = @tableName");
+        
+        command.ExecuteScalarAsync(@params)
+        
+        await Database.ExecuteSqlAsync(command, @params);
+
+        return Convert.ToInt32(@params[0].Value);*/
+
+        return -1;
     }
 
     #endregion
