@@ -89,29 +89,8 @@ public class SessionService : ISessionService
             SessionType = SessionType.Previous
         }
     };
-    
-    public readonly List<Session> SavedSessions = new()
-    {
-        new Session
-        {
-            LastChange = DateTime.Now.AddHours(-2),
-            SessionType = SessionType.Saved,
-            Windows =
-            {
-                new Window
-                {
-                    Tabs =
-                    {
-                        new Tab
-                        {
-                            Title = "blazor custom component not working - Google Search",
-                            Url = "https://www.google.com/search?q=blazor+custom+component+not+working&ie=UTF-8"
-                        }
-                    }
-                }
-            }
-        }
-    };
+
+    public readonly List<Session> SavedSessions = new();
 
     #endregion
 
@@ -137,9 +116,13 @@ public class SessionService : ISessionService
     
     #region Public Methods
 
-    public void Initialize(IContextMenuService contextMenuService)
+    private IDatabaseService _databaseService = null!;
+
+    public void Initialize(IContextMenuService contextMenuService, IDatabaseService databaseService)
     {
         _windowMenu = contextMenuService.GetMenu<WindowMenu>(ContextMenuId.WINDOW);
+        _databaseService = databaseService;
+        _databaseService.GetSessions().Each(InsertSession);
     }
     
     public void UpdateSelection(int id)
@@ -156,70 +139,14 @@ public class SessionService : ISessionService
 
     public int AddSession(Session session)
     {
-        session.Identifier = _insertRow;
-        _sessionTable.Add(session.Identifier, session);
+        session.Id = _insertRow;
+        _sessionTable.Add(session.Id, session);
         return _insertRow++;
-    }
-    
-    public RenderFragment RenderSessionGroup(SessionType type)
-    {
-        return _RenderFragment;
-
-        void _RenderFragment(RenderTreeBuilder builder)
-        {
-            builder.OpenComponent<SessionGroup>(sequence: 0);
-            builder.AddAttribute(sequence: 1, nameof(SessionGroup.Title),        value: GetSessionTitle(type));
-            builder.AddAttribute(sequence: 2, nameof(SessionGroup.SessionType),  value: type);
-            builder.AddAttribute(sequence: 3, nameof(SessionGroup.ChildContent), value: (RenderFragment)_RenderChildContent);
-            builder.CloseComponent();
-        }
-
-        void _RenderChildContent(RenderTreeBuilder builder)
-        {
-            GetSessionsByType(type).Each(_RenderSessionRow);
-            return;
-                
-            void _RenderSessionRow(Session session)
-            {
-                builder.OpenComponent<SessionRow>(sequence: 4);
-                builder.AddAttribute(sequence: 5, nameof(SessionRow.Title),       value: session.Title);
-                builder.AddAttribute(sequence: 6, nameof(SessionRow.LastChange),  value: session.LastChange);
-                builder.AddAttribute(sequence: 7, nameof(SessionRow.TabCount),    value: session.TabCount);
-                builder.AddAttribute(sequence: 8, nameof(SessionRow.SessionType), value: session.SessionType);
-                builder.AddAttribute(sequence: 9,  nameof(SessionRow.Selected),    value: SelectedSessionId == session.Identifier);
-                builder.AddAttribute(sequence: 10, nameof(SessionRow.Identifier),  value: session.Identifier);
-                builder.CloseComponent();
-            }
-        }
-    }
-
-    public RenderFragment RenderSelectedSession()
-    {
-        Session session = SelectedSession;
-        
-        return _RenderFragment;
-
-        void _RenderFragment(RenderTreeBuilder builder)
-        {
-            builder.OpenComponent<SessionLayout>(sequence: 0);
-            builder.AddAttribute(sequence: 1, nameof(SessionLayout.Title),       value: session.Title);
-            builder.AddAttribute(sequence: 2, nameof(SessionLayout.WindowCount), value: session.Windows.Count);
-            builder.AddAttribute(sequence: 3, nameof(SessionLayout.TabCount),    value: session.TabCount);
-            builder.AddAttribute(sequence: 4, nameof(SessionLayout.LastChange),  value: session.LastChange);
-            builder.AddAttribute(sequence: 5, nameof(SessionLayout.Windows),     value: session.Windows);
-            builder.AddAttribute(sequence: 6, nameof(SessionLayout.SessionType), value: session.SessionType);
-            builder.CloseComponent();
-        }
     }
     
     public void SaveCurrentSession(string? name = null)
     {
-        Session session = CurrentSession.Copy();
-        session.Title = name ?? "Unnamed session";
-        session.Created = DateTime.Now;
-        AddSession(session);
-        SavedSessions.Add(session);
-        SessionsUpdated();
+        SaveSession(CurrentSession, name);
     }
 
     public void CloseSession(int sessionId)
@@ -272,9 +199,23 @@ public class SessionService : ISessionService
         Console.WriteLine("Overwriting session!");
     }
 
-    public void SaveSession(int sessionId)
+    public void SaveSession(int sessionId, string? name = null)
+    {
+        if (!_sessionTable.ContainsKey(sessionId))
+            return;
+        SaveSession(_sessionTable[sessionId]);
+    }
+    
+    public void SaveSession(Session session, string? name = null)
     {
         Console.WriteLine("Saving session!");
+
+        Session newSession = session.Copy();
+        newSession.Title = name ?? "Unnamed session";
+        newSession.Created = DateTime.Now;
+        newSession.SessionType = SessionType.Saved;
+
+        InsertSession(newSession);
     }
 
     public void ImportSession(string fileContents)
@@ -285,6 +226,29 @@ public class SessionService : ISessionService
     #endregion
 
     #region Private Methods
+
+    private void InsertSession(Session session)
+    {
+        if ((session.Id is { } id && _sessionTable.ContainsKey(id)) || AddSession(session) is -1)
+            return;
+        
+        switch (session.SessionType)
+        {
+            case SessionType.Previous:
+                PreviousSessions.Add(session);
+                break;
+            case SessionType.Saved:
+            case SessionType.Updated:
+                SavedSessions.Add(session);
+                break;
+            case SessionType.Current:
+            default:
+                throw new InvalidEnumArgumentException();
+        }
+        
+        _databaseService.AddSession(session);
+        SessionsUpdated();
+    }
 
     private string GetSessionTitle(SessionType type)
     {
@@ -308,6 +272,58 @@ public class SessionService : ISessionService
             SessionType.Updated  => SavedSessions,
             _                    => throw new InvalidEnumArgumentException($"Invalid session type '{type}'")
         };
+    }
+
+    #endregion
+
+    #region Rendering
+
+    public RenderFragment RenderSessionGroup(SessionType type)
+    {
+        return _RenderFragment;
+
+        void _RenderFragment(RenderTreeBuilder builder)
+        {
+            builder.OpenComponent<SessionGroup>(sequence: 0);
+            builder.AddAttribute(sequence: 1, nameof(SessionGroup.Title),        value: GetSessionTitle(type));
+            builder.AddAttribute(sequence: 2, nameof(SessionGroup.SessionType),  value: type);
+            builder.AddAttribute(sequence: 3, nameof(SessionGroup.ChildContent), value: (RenderFragment)_RenderChildContent);
+            builder.CloseComponent();
+        }
+
+        void _RenderChildContent(RenderTreeBuilder builder)
+        {
+            foreach (Session session in GetSessionsByType(type))
+            {
+                builder.OpenComponent<SessionRow>(sequence: 4);
+                builder.AddAttribute(sequence:  5, nameof(SessionRow.Id),          value: session.Id);
+                builder.AddAttribute(sequence:  6, nameof(SessionRow.Title),       value: session.Title);
+                builder.AddAttribute(sequence:  7, nameof(SessionRow.LastChange),  value: session.LastChange);
+                builder.AddAttribute(sequence:  8, nameof(SessionRow.TabCount),    value: session.TabCount);
+                builder.AddAttribute(sequence:  9, nameof(SessionRow.SessionType), value: session.SessionType);
+                builder.AddAttribute(sequence: 10, nameof(SessionRow.Selected),    value: SelectedSessionId == session.Id);
+                builder.CloseComponent();
+            }
+        }
+    }
+
+    public RenderFragment RenderSelectedSession()
+    {
+        Session session = SelectedSession;
+        
+        return _RenderFragment;
+
+        void _RenderFragment(RenderTreeBuilder builder)
+        {
+            builder.OpenComponent<SessionLayout>(sequence: 0);
+            builder.AddAttribute(sequence: 1, nameof(SessionLayout.Title),       value: session.Title);
+            builder.AddAttribute(sequence: 2, nameof(SessionLayout.WindowCount), value: session.Windows.Count);
+            builder.AddAttribute(sequence: 3, nameof(SessionLayout.TabCount),    value: session.TabCount);
+            builder.AddAttribute(sequence: 4, nameof(SessionLayout.LastChange),  value: session.LastChange);
+            builder.AddAttribute(sequence: 5, nameof(SessionLayout.Windows),     value: session.Windows);
+            builder.AddAttribute(sequence: 6, nameof(SessionLayout.SessionType), value: session.SessionType);
+            builder.CloseComponent();
+        }
     }
 
     #endregion

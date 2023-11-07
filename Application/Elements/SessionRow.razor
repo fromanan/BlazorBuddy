@@ -36,7 +36,7 @@
     public bool Selected { get; set; }
     
     [Parameter]
-    public int Identifier { get; set; }
+    public int Id { get; set; }
 
     #endregion
 
@@ -69,13 +69,13 @@
     private void Select()
     {
         Selected = true;
-        SessionService.UpdateSelection(Identifier);
+        SessionService.UpdateSelection(Id);
         SessionService.SelectionChanged += OnSelectionChanged;
     }
 
     private void OnSelectionChanged(int id)
     {
-        if (!Selected || id == Identifier)
+        if (!Selected || id == Id)
             return;
         Selected = false;
         SessionService.SelectionChanged -= OnSelectionChanged;

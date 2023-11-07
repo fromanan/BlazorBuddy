@@ -48,6 +48,16 @@
 
     #endregion
 
+    #region Overrides
+
+    protected override void OnInitialized()
+    {
+        SessionService.SessionsUpdated += () => InvokeAsync(StateHasChanged);
+        SessionService.SelectionChanged += _ => InvokeAsync(StateHasChanged);
+    }
+
+    #endregion
+    
     #region Event Handlers
 
     private void ToggleNavMenu()

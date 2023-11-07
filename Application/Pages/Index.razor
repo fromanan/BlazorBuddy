@@ -1,6 +1,8 @@
 ﻿@inject ISessionService SessionService
 @inject ILayoutService LayoutService
 @inject IContextMenuService ContextMenuService
+@inject IDatabaseService DatabaseService
+@inject SessionContext SessionContext
 
 @page "/"
 
@@ -15,9 +17,11 @@
         SubscribeListeners();
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        SessionService.Initialize(ContextMenuService);
+        await SessionContext.Initialize();
+        
+        SessionService.Initialize(ContextMenuService, DatabaseService);
     }
 
     private void SubscribeListeners()

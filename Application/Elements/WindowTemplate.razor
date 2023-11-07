@@ -1,7 +1,7 @@
 ﻿<li class="window @Window.SelectedWindowClass">
     <div>
         <ClickableIcon IconClass="tab-close" Url="../img/xto.png" ClickAction="@OnWindowCloseClicked"/>
-        <ButtonWithMenu Class="window-title highlight-accent" ContextMenuId="@ContextMenuId.WINDOW" Trigger="@Trigger">
+        <ButtonWithMenu Class="@Window.WindowTitleClass" ContextMenuId="@ContextMenuId.WINDOW" Trigger="@Trigger">
             @Window.Title
         </ButtonWithMenu>
         <div class="window-counts">

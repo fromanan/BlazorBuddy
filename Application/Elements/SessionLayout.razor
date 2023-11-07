@@ -119,11 +119,13 @@
             Windows[0].IsCurrentWindow = true;
             Windows[0].Title = "Current Window";
         }
+
+        SessionService.SessionsUpdated += () => InvokeAsync(StateHasChanged);
     }
 
     #endregion
 
-    #region Private Methods
+    #region Event Handlers
 
     private void OnCloseWindow(MouseEventArgs args, int windowId)
     {
@@ -139,15 +141,12 @@
     {
         if (!IsRenameable)
             return;
-        await DialogService.ShowDialogAsync(DialogId.Rename);
+        await DialogService.ShowDialogAsync(DialogId.Rename, OnModalSubmit);
     }
 
     private async Task OnSaveClicked(MouseEventArgs args)
     {
-        if (await DialogService.ShowDialogAsync(DialogId.Save))
-        {
-            SessionService.SaveSession(-1);
-        }
+        await DialogService.ShowDialogAsync(DialogId.Save, OnModalSubmit);
     }
 
     private void OnModalSubmit(bool success, object? result)

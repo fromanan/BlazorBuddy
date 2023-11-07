@@ -22,7 +22,7 @@ public interface ISessionService
 
     #region Methods
 
-    void Initialize(IContextMenuService contextMenuService);
+    void Initialize(IContextMenuService contextMenuService, IDatabaseService databaseService);
 
     void UpdateSelection(int id);
 
@@ -54,7 +54,9 @@ public interface ISessionService
 
     void OverwriteSession(int sessionId, int otherSessionId = -1);
 
-    void SaveSession(int sessionId);
+    void SaveSession(int sessionId, string? name = null);
+
+    void SaveSession(Session session, string? name = null);
 
     void ImportSession(string fileContents);
 
