@@ -22,11 +22,18 @@ builder.Services.AddSingleton<IFileService, FileService>();
 builder.Services.AddSingleton<ILayoutService, LayoutService>();
 builder.Services.AddSingleton<ISessionService, SessionService>();
 
-builder.Services.AddDbContext<SessionContext>(contextLifetime: ServiceLifetime.Singleton, optionsAction: options =>
+string databasePath = DatabaseService.InitializeEnvironment(builder.Configuration);
+
+void _OptionsSetup(DbContextOptionsBuilder options)
 {
-   options.UseSqlite($"Data Source={DatabaseService.InitializeEnvironment(builder.Configuration)};");
+   options.UseSqlite($"Data Source={databasePath};");
    options.EnableSensitiveDataLogging();
-});
+}
+
+builder.Services.AddDbContext<RootContext>(contextLifetime: ServiceLifetime.Singleton, optionsAction: _OptionsSetup);
+builder.Services.AddDbContext<SessionContext>(contextLifetime: ServiceLifetime.Singleton, optionsAction: _OptionsSetup);
+builder.Services.AddDbContext<WindowContext>(contextLifetime: ServiceLifetime.Singleton, optionsAction: _OptionsSetup);
+builder.Services.AddDbContext<TabContext>(contextLifetime: ServiceLifetime.Singleton, optionsAction: _OptionsSetup);
 
 WebApplication app = builder.Build();
 

@@ -1,5 +1,5 @@
 ﻿using Application.Data;
-using Application.Models;
+using Application.Data.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace Application.Interfaces;

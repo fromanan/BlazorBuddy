@@ -1,4 +1,5 @@
-﻿using Application.Models;
+﻿using Application.Data;
+using Application.Data.Models;
 
 namespace Application.Interfaces;
 
@@ -6,7 +7,7 @@ public interface IDatabaseService
 {
     #region Methods
 
-    Task Initialize();
+    Task Initialize(RootContext context);
 
     void AddSession(Session session);
 

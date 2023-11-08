@@ -2,7 +2,7 @@ param ( [switch]$debug = $false )
 
 $migration = Read-Host "Enter Migration Name"
 if ([string]::IsNullOrEmpty("$migration")) {exit}
-dotnet ef migrations add $migration
+dotnet ef migrations add $migration --context RootContext
 
 if ($debug -or $lastExitCode)
 {

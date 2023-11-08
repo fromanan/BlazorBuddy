@@ -2,7 +2,10 @@
 @inject ILayoutService LayoutService
 @inject IContextMenuService ContextMenuService
 @inject IDatabaseService DatabaseService
+@inject RootContext RootContext
 @inject SessionContext SessionContext
+@inject WindowContext WindowContext
+@inject TabContext TabContext
 
 @page "/"
 
@@ -12,26 +15,26 @@
 
 @code
 {
+    #region Overrides
+
     protected override void OnInitialized()
-    {
-        SubscribeListeners();
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await SessionContext.Initialize();
-        await DatabaseService.Initialize();
-        await SessionService.Initialize(ContextMenuService, DatabaseService);
-    }
-
-    private void SubscribeListeners()
     {
         SessionService.SubscribeToUpdate(UpdateView);
         LayoutService.SubscribeToUpdate(UpdateView);
     }
 
-    private async void UpdateView()
+    protected override async Task OnInitializedAsync()
     {
-        await InvokeAsync(StateHasChanged);
+        await RootContext.Initialize(SessionContext, WindowContext, TabContext);
+        await DatabaseService.Initialize(RootContext);
+        await SessionService.Initialize(ContextMenuService, DatabaseService);
     }
+
+    #endregion
+
+    #region Private Methods
+
+    private async void UpdateView() => await InvokeAsync(StateHasChanged);
+
+    #endregion
 }

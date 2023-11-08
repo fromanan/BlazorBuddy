@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
 using Application.Data;
+using Application.Data.Models;
 using Application.Elements;
 using Application.Elements.ContextMenus;
 using Application.Extensions;
 using Application.Interfaces;
-using Application.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 

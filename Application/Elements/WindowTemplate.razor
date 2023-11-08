@@ -1,4 +1,5 @@
-﻿<li class="window @Window.SelectedWindowClass">
+﻿@using Application.Data.Models
+<li class="window @Window.SelectedWindowClass">
     <div>
         <ClickableIcon IconClass="tab-close" Url="../img/xto.png" ClickAction="@OnWindowCloseClicked"/>
         <ButtonWithMenu Class="@Window.WindowTitleClass" ContextMenuId="@ContextMenuId.WINDOW" Trigger="@Trigger">

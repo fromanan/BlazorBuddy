@@ -1,7 +1,8 @@
 ﻿using Application.Data;
+using Application.Data.Exceptions;
+using Application.Data.Models;
 using Application.Extensions;
 using Application.Interfaces;
-using Application.Models;
 
 namespace Application.Services;
 
@@ -9,7 +10,7 @@ public class DatabaseService : IDatabaseService, IDisposable, IAsyncDisposable
 {
     #region Data Members
 
-    private readonly SessionContext _context;
+    private RootContext _context = null!;
     
     private int _insertRowSessions;
     
@@ -19,19 +20,12 @@ public class DatabaseService : IDatabaseService, IDisposable, IAsyncDisposable
 
     #endregion
     
-    #region Constructors
-
-    public DatabaseService(SessionContext context)
-    {
-        _context = context;
-    }
-
-    #endregion
-    
     #region Public Methods
     
-    public async Task Initialize()
+    public async Task Initialize(RootContext context)
     {
+        _context = context;
+        
         _insertRowSessions = await _context.GetCurrentId(typeof(Session)) + 1;
         _insertRowWindows  = await _context.GetCurrentId(typeof(Window)) + 1;
         _insertRowTabs     = await _context.GetCurrentId(typeof(Tab)) + 1;
@@ -136,19 +130,6 @@ public class DatabaseService : IDatabaseService, IDisposable, IAsyncDisposable
         GC.SuppressFinalize(this);
         await _context.SaveChangesAsync();
         await _context.DisposeAsync();
-    }
-
-    #endregion
-
-    #region Embedded Types
-
-    public class DatabaseException : Exception
-    {
-        public DatabaseException() { }
-        
-        public DatabaseException(string message) : base(message) { }
-        
-        public DatabaseException(string message, Exception innerException) : base(message, innerException) { }
     }
 
     #endregion
