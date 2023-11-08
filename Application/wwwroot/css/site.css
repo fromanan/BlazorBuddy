@@ -472,13 +472,6 @@ button[selected], button[selected]:hover {
     right: 0;
 }
 
-#overlay {
-    background-color: black;
-    z-index: 1001;
-    opacity: 0.3;
-    transition: opacity .1s linear;
-}
-
 #dialogs {
     z-index: 1002;
     pointer-events: none;

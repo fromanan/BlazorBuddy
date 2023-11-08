@@ -36,7 +36,7 @@
 
     protected override object? GetDialogResult()
     {
-    // ReSharper disable once HeapView.BoxingAllocation
+        // ReSharper disable once HeapView.BoxingAllocation
         return new ImportFileResult
         {
             FileContents = FileContents ?? string.Empty
@@ -86,6 +86,7 @@
 
     private async Task<string?> OpenFileDialog()
     {
+        await Task.Delay(100);
         return string.Empty;
     }
 

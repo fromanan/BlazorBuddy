@@ -24,7 +24,6 @@ public class DatabaseService : IDatabaseService, IDisposable, IAsyncDisposable
     public DatabaseService(SessionContext context)
     {
         _context = context;
-        
     }
 
     #endregion
@@ -33,9 +32,9 @@ public class DatabaseService : IDatabaseService, IDisposable, IAsyncDisposable
     
     public async Task Initialize()
     {
-        _insertRowSessions = await _context.GetCurrentId(typeof(Session));
-        _insertRowWindows = await _context.GetCurrentId(typeof(Window));
-        _insertRowTabs = await _context.GetCurrentId(typeof(Tab));
+        _insertRowSessions = await _context.GetCurrentId(typeof(Session)) + 1;
+        _insertRowWindows  = await _context.GetCurrentId(typeof(Window)) + 1;
+        _insertRowTabs     = await _context.GetCurrentId(typeof(Tab)) + 1;
 
         // Reserve 0 for CurrentSession
         if (_insertRowSessions is 0)
@@ -45,21 +44,53 @@ public class DatabaseService : IDatabaseService, IDisposable, IAsyncDisposable
     public void AddSession(Session session)
     {
         session.Id = _insertRowSessions++;
+        
         _context.Sessions.Add(session);
-        session.Windows.Each(AddWindow);
+        
+        foreach (Window window in session.Windows)
+        {
+            window.SessionId = session.Id;
+            AddWindow(window);
+        }
     }
 
     public void AddWindow(Window window)
     {
         window.Id = _insertRowWindows++;
+        
         _context.Windows.Add(window);
-        window.Tabs.Each(AddTab);
+        
+        foreach (Tab tab in window.Tabs)
+        {
+            tab.WindowId = window.Id;
+            AddTab(tab);
+        }
     }
 
     public void AddTab(Tab tab)
     {
         tab.Id = _insertRowTabs++;
         _context.Tabs.Add(tab);
+    }
+
+    public async Task AddSessionAsync(Session session)
+    {
+        session.Id = _insertRowSessions++;
+        await _context.Sessions.AddAsync(session);
+        await session.Windows.EachAsync(AddWindowAsync);
+    }
+
+    public async Task AddWindowAsync(Window window)
+    {
+        window.Id = _insertRowWindows++;
+        await _context.Windows.AddAsync(window);
+        await window.Tabs.EachAsync(AddTabAsync);
+    }
+
+    public async Task AddTabAsync(Tab tab)
+    {
+        tab.Id = _insertRowTabs++;
+        await _context.Tabs.AddAsync(tab);
     }
 
     public IEnumerable<Session> GetSessions()

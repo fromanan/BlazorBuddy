@@ -22,9 +22,11 @@ public class Window : IEntity<Window>
     
     [Column("is_incognito")]
     public bool IsIncognito { get; set; }
-
-    [ForeignKey(nameof(Tab))]
+    
     public List<Tab> Tabs { get; set; } = new();
+    
+    [ForeignKey(nameof(Session)), Column("session_id")]
+    public int SessionId { get; set; }
 
     #endregion
     

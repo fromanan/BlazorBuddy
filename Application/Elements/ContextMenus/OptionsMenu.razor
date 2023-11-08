@@ -3,43 +3,43 @@
 @inject ILayoutService LayoutService
 
 <ContextMenu Id="@ContextMenuId.OPTIONS">
-    @* TODO: Disable for Type=Previous *@
-    <Item OnClick="@OnRenameSession">
+    <Item OnClick="@OnRenameSession" Enabled="@(!IsPrevious)">
         Rename
     </Item>
-    @* TODO: Disable for Type=Previous *@
-    <Item OnClick="@OnDuplicateSession">
+    <Item OnClick="@OnDuplicateSession" Enabled="@(!IsPrevious)">
         Duplicate
     </Item>
     <Item OnClick="@OnDeleteSession">
         Delete
     </Item>
     <Separator/>
-    <Item OnClick="@OnSortByTitle">
+    <Item OnClick="@OnSortByTitle" Enabled="@(!IsPrevious)">
         Sort by title
     </Item>
-    <Item OnClick="@OnSortByUrl">
+    <Item OnClick="@OnSortByUrl" Enabled="@(!IsPrevious)">
         Sort by URL
     </Item>
-    <Item OnClick="@OnUnifyWindows">
+    <Item OnClick="@OnUnifyWindows" Enabled="@(!IsPrevious)">
         Unify windows
     </Item>
-    @* TODO: Disable for Type=Previous *@
-    <Item OnClick="@OnOverwriteSession">
+    <Item OnClick="@OnOverwriteSession" Enabled="@(!IsPrevious)">
         Overwrite with current
     </Item>
 </ContextMenu>
 
 @code
 {
+    #region Properties
+
+    private bool IsPrevious => SessionService.SelectedSession.SessionType is SessionType.Previous;
+
+    #endregion
+    
     #region Event Handlers
 
     private async Task OnRenameSession(ItemClickEventArgs args)
     {
-        if (await DialogService.ShowDialogAsync(DialogId.Rename))
-        {
-            SessionService.RenameSession(-1, string.Empty);
-        }
+        await DialogService.ShowDialogAsync(DialogId.Rename, OnModalSubmit);
     }
 
     private void OnDuplicateSession(ItemClickEventArgs args)
@@ -70,6 +70,34 @@
     private void OnOverwriteSession(ItemClickEventArgs args)
     {
         SessionService.OverwriteSession(-1);
+    }
+    
+    private async Task OnModalSubmit(bool success, object? result)
+    {
+        if (!success)
+            return;
+        
+        switch (result)
+        {
+            case SaveModal.SaveSessionResult saveSessionResult:
+            {
+                await SessionService.SaveCurrentSession(saveSessionResult.Name);
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+            case RenameDialog.NameSessionResult nameSessionResult:
+            {
+                SessionService.RenameSession(-1, nameSessionResult.Name);
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+            case ImportDialog.ImportFileResult importFileResult:
+            {
+                await SessionService.ImportSession(importFileResult.FileContents);
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+        }
     }
 
     #endregion

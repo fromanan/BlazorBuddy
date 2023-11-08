@@ -1,9 +1,6 @@
 ﻿using Application.Data;
 using Application.Interfaces;
 using Application.Models;
-/*using Application.Elements;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;*/
 
 namespace Application.Services;
 
@@ -68,38 +65,16 @@ public class LayoutService : ILayoutService
     {
         
     }
-
+    
     #endregion
 
-    #region Overlay
+    #region IUpdateTrigger Implementation
 
-    /*private Overlay? _Overlay;
-
-    public RenderFragment RenderOverlay()
+    public void SubscribeToUpdate(Action updateView)
     {
-        return _RenderFragment;
-
-        void _RenderFragment(RenderTreeBuilder builder)
-        {
-            builder.OpenComponent<Overlay>(0);
-            builder.AddAttribute(1, nameof(Overlay.Id),  "overlay");
-            builder.AddComponentReferenceCapture(2, overlay =>
-            {
-                _Overlay = (Overlay)overlay;
-            });
-            builder.CloseComponent();
-        }
+        LayoutStyleChanged += _ => updateView();
+        SortOrderChanged   += _ => updateView();
     }
-
-    public void ShowOverlay()
-    {
-        _Overlay?.Show();
-    }
-
-    public void HideOverlay()
-    {
-        _Overlay?.Hide();
-    }*/
 
     #endregion
 }

@@ -1,6 +1,6 @@
-﻿using System.Data;
+﻿using Application.Data.Exceptions;
+using Application.Extensions;
 using Application.Models;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -8,6 +8,14 @@ namespace Application.Data;
 
 public class SessionContext : DbContext
 {
+    #region Data Members
+
+    private const string _COUNT_QUERY = "select {0} from sqlite_sequence where [name] = '{1}'";
+
+    private const string _EXISTS_QUERY = "select exists ( {0} ) as Value";
+
+    #endregion
+    
     #region Properties
 
     public DbSet<Session> Sessions { get; set; }
@@ -20,12 +28,11 @@ public class SessionContext : DbContext
 
     #region Constructor
     
-    public SessionContext(DbContextOptions<SessionContext> options)
-        : base(options)
+    public SessionContext(DbContextOptions<SessionContext> options) : base(options)
     {
         Sessions = base.Set<Session>();
-        Windows = base.Set<Window>();
-        Tabs = base.Set<Tab>();
+        Windows  = base.Set<Window>();
+        Tabs     = base.Set<Tab>();
     }
 
     #endregion
@@ -34,32 +41,20 @@ public class SessionContext : DbContext
 
     public async Task Initialize()
     {
-        await Database.EnsureCreatedAsync();
+        await Database.MigrateAsync();
+    }
+
+    private async Task<bool> Exists(string innerQuery)
+    {
+        return await Database.SqlQueryRaw<bool>(_EXISTS_QUERY.Format(innerQuery)).SingleAsync();
     }
 
     public async Task<int> GetCurrentId(Type entityType)
     {
-        /*SqliteParameter[] @params =
-        {
-            new("@returnVal", SqliteType.Integer)
-            {
-                Direction = ParameterDirection.Output
-            },
-            new("@tableName", SqliteType.Text)
-            {
-                Direction = ParameterDirection.Input
-            }
-        };
-
-        SqliteCommand command = new("@returnVal = select seq from sqlite_sequence where name = @tableName");
+        if (!await Exists(_COUNT_QUERY.Format(1, $"{entityType.Name}s")))
+            return 0;
         
-        command.ExecuteScalarAsync(@params)
-        
-        await Database.ExecuteSqlAsync(command, @params);
-
-        return Convert.ToInt32(@params[0].Value);*/
-
-        return -1;
+        return await Database.SqlQueryRaw<int>(_COUNT_QUERY.Format("seq as Value", $"{entityType.Name}s")).SingleAsync();
     }
 
     #endregion
@@ -71,12 +66,18 @@ public class SessionContext : DbContext
         switch (entity)
         {
             case Session session:
+                if (Sessions.ContainsId(session))
+                    throw new DataException("Attempted to add duplicate entry!");
                 Sessions.Add(session);
                 break;
             case Window window:
+                if (Windows.ContainsId(window))
+                    throw new DataException("Attempted to add duplicate entry!");
                 Windows.Add(window);
                 break;
             case Tab tab:
+                if (Tabs.ContainsId(tab))
+                    throw new DataException("Attempted to add duplicate entry!");
                 Tabs.Add(tab);
                 break;
         }

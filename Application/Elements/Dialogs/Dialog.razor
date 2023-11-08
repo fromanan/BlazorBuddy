@@ -92,9 +92,39 @@
                 _completionSource.TrySetResult(success);
             }
             
+            if (ModalResultCallback is not null && callback is not null)
+            {
+                await Task.Run(() => callback.Invoke(success, result ?? (success ? GetDialogResult() : null)));
+            }
+        }
+    }
+    
+    public async Task<bool> OpenModalAsync(Func<bool, object?, Task> asyncCallback)
+    {
+        _completionSource = new TaskCompletionSource<bool>(_tokenSource);
+
+        await _dialogElement.OpenDialogAsync();
+        
+        ModalResultCallback = _AsyncCallback;
+        
+        await InvokeAsync(StateHasChanged);
+        
+        return await _completionSource.Task;
+
+        async void _AsyncCallback(bool success, object? result)
+        {
+            if (!success)
+            {
+                _completionSource.TrySetCanceled(_tokenSource.Token);
+            }
+            else
+            {
+                _completionSource.TrySetResult(success);
+            }
+            
             if (ModalResultCallback is not null)
             {
-                await Task.Run(() => callback?.Invoke(success, result ?? (success ? GetDialogResult() : null)));
+                await asyncCallback.Invoke(success, result ?? (success ? GetDialogResult() : null));
             }
         }
     }

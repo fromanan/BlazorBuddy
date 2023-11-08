@@ -21,24 +21,16 @@
     {
         await SessionContext.Initialize();
         await DatabaseService.Initialize();
-        
-        SessionService.Initialize(ContextMenuService, DatabaseService);
+        await SessionService.Initialize(ContextMenuService, DatabaseService);
     }
 
     private void SubscribeListeners()
     {
-        SessionService.SelectionChanged     += UpdateView;
-        SessionService.SessionsUpdated      += UpdateView;
-        LayoutService.LayoutStyleChanged    += UpdateView;
-        LayoutService.SortOrderChanged      += UpdateView;
+        SessionService.SubscribeToUpdate(UpdateView);
+        LayoutService.SubscribeToUpdate(UpdateView);
     }
 
     private async void UpdateView()
-    {
-        await InvokeAsync(StateHasChanged);
-    }
-
-    private async void UpdateView<T>(T obj)
     {
         await InvokeAsync(StateHasChanged);
     }

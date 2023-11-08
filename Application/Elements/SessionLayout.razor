@@ -149,7 +149,7 @@
         await DialogService.ShowDialogAsync(DialogId.Save, OnModalSubmit);
     }
 
-    private void OnModalSubmit(bool success, object? result)
+    private async Task OnModalSubmit(bool success, object? result)
     {
         if (!success)
             return;
@@ -158,20 +158,20 @@
         {
             case SaveModal.SaveSessionResult saveSessionResult:
             {
-                SessionService.SaveCurrentSession(saveSessionResult.Name);
-                InvokeAsync(StateHasChanged);
+                await SessionService.SaveCurrentSession(saveSessionResult.Name);
+                await InvokeAsync(StateHasChanged);
                 return;
             }
             case RenameDialog.NameSessionResult nameSessionResult:
             {
                 SessionService.RenameSession(SessionId, nameSessionResult.Name);
-                InvokeAsync(StateHasChanged);
+                await InvokeAsync(StateHasChanged);
                 return;
             }
             case ImportDialog.ImportFileResult importFileResult:
             {
-                SessionService.ImportSession(importFileResult.FileContents);
-                InvokeAsync(StateHasChanged);
+                await SessionService.ImportSession(importFileResult.FileContents);
+                await InvokeAsync(StateHasChanged);
                 return;
             }
         }

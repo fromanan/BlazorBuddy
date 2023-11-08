@@ -18,6 +18,9 @@ public class Tab : IEntity<Tab>
     
     [Column("url")]
     public string? Url { get; set; }
+    
+    [ForeignKey(nameof(Window)), Column("window_id")]
+    public int WindowId { get; set; }
 
     #endregion
     

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Application.Interfaces;
 
-public interface ISessionService
+public interface ISessionService : IUpdateTrigger
 {
     #region Events
 
@@ -17,22 +17,18 @@ public interface ISessionService
     #region Properties
 
     public int SelectedSessionId { get; }
+    
+    public Session SelectedSession { get; }
 
     #endregion
 
     #region Methods
 
-    void Initialize(IContextMenuService contextMenuService, IDatabaseService databaseService);
+    Task Initialize(IContextMenuService contextMenuService, IDatabaseService databaseService);
 
     void UpdateSelection(int id);
 
-    void AddSession(Session session);
-
-    RenderFragment RenderSessionGroup(SessionType type);
-
-    RenderFragment RenderSelectedSession();
-
-    void SaveCurrentSession(string? name = null);
+    Task AddSession(Session session);
     
     void CloseSession(int sessionId);
 
@@ -54,11 +50,17 @@ public interface ISessionService
 
     void OverwriteSession(int sessionId, int otherSessionId = -1);
 
-    void SaveSession(int sessionId, string? name = null);
+    Task SaveSession(int sessionId, string? name = null);
 
-    void SaveSession(Session session, string? name = null);
+    Task SaveSession(Session session, string? name = null);
+    
+    Task SaveCurrentSession(string? name = null);
 
-    void ImportSession(string fileContents);
+    Task ImportSession(string fileContents);
+    
+    RenderFragment RenderSessionGroup(SessionType type);
+
+    RenderFragment RenderSelectedSession();
 
     #endregion
 }

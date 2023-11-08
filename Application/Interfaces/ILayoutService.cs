@@ -3,7 +3,7 @@ using Application.Models;
 
 namespace Application.Interfaces;
 
-public interface ILayoutService
+public interface ILayoutService : IUpdateTrigger
 {
     #region Properties
 

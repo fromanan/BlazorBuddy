@@ -9,6 +9,8 @@ public interface IDialogService
     void ShowDialog(string id, Action<bool, object?>? callback = null);
 
     Task<bool> ShowDialogAsync(string id, Action<bool, object?>? callback = null);
+    
+    Task<bool> ShowDialogAsync(string id, Func<bool, object?, Task> asyncCallback);
 
     RenderFragment RenderDialog(string id);
 

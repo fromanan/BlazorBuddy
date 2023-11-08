@@ -32,6 +32,11 @@ public class DialogService : IDialogService
     {
         return await _Dialogs[id].OpenModalAsync(callback);
     }
+    
+    public async Task<bool> ShowDialogAsync(string id, Func<bool, object?, Task> asyncCallback)
+    {
+        return await _Dialogs[id].OpenModalAsync(asyncCallback);
+    }
 
     public RenderFragment RenderDialog(string id)
     {

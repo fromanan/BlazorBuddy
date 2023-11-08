@@ -29,7 +29,6 @@ public class Session : IEntity<Session>
     [Column("session_type")]
     public SessionType SessionType { get; set; }
     
-    [ForeignKey(nameof(Window))]
     public List<Window> Windows { get; set; } = new();
 
     #endregion

@@ -26,7 +26,7 @@ public class SessionService : ISessionService
 
     public int SelectedSessionId { get; private set; }
 
-    private Session SelectedSession => _sessionTable[SelectedSessionId];
+    public Session SelectedSession => _sessionTable[SelectedSessionId];
 
     #endregion
 
@@ -39,8 +39,8 @@ public class SessionService : ISessionService
     #endregion
 
     #region Sessions
-    
-    public readonly Session CurrentSession = new()
+
+    private readonly Session _currentSession = new()
     {
         Id = 0,
         LastChange = DateTime.Now.AddSeconds(-3),
@@ -60,8 +60,8 @@ public class SessionService : ISessionService
             }
         }
     };
-    
-    public readonly List<Session> PreviousSessions = new()
+
+    private readonly List<Session> _previousSessions = new()
     {
         new Session
         {
@@ -89,30 +89,24 @@ public class SessionService : ISessionService
         }
     };
 
-    public readonly List<Session> SavedSessions = new();
-
-    #endregion
-
-    #region Constructor
-
-    public SessionService()
-    {
-        AddSession(CurrentSession);
-    }
+    private readonly List<Session> _savedSessions = new();
 
     #endregion
     
     #region Public Methods
 
-    public void Initialize(IContextMenuService contextMenuService, IDatabaseService databaseService)
+    public async Task Initialize(IContextMenuService contextMenuService, IDatabaseService databaseService)
     {
         _windowMenu = contextMenuService.GetMenu<WindowMenu>(ContextMenuId.WINDOW);
         _databaseService = databaseService;
-        _databaseService.GetSessions().Each(InsertSession);
+        await _databaseService.GetSessions().EachAsync(InsertSession);
+        
+        await AddSession(_currentSession);
+        await _currentSession.Windows.EachAsync(_databaseService.AddWindowAsync);
         
         // TODO: Defaults, Remove
-        PreviousSessions.Each(AddSession);
-        SavedSessions.Each(AddSession);
+        await _previousSessions.EachAsync(AddSession);
+        await _savedSessions.EachAsync(AddSession);
     }
     
     public void UpdateSelection(int id)
@@ -120,23 +114,24 @@ public class SessionService : ISessionService
         if (id == SelectedSessionId)
             return;
         SelectedSessionId = id;
-        SelectionChanged(id);
         if (_windowMenu is { } windowMenu)
-        {
             windowMenu.IsCurrent = SelectedSession.SessionType is SessionType.Current;
-        }
+        SelectionChanged(id);
     }
 
-    public void AddSession(Session session)
+    public async Task AddSession(Session session)
     {
+        // Session has not been persisted
         if (session.Id < 0)
-            _databaseService.AddSession(session);
+            await _databaseService.AddSessionAsync(session);
+        if (Exists(session.Id))
+            return; //throw new DataException($"Duplicate session: {session.Id}");
         _sessionTable.Add(session.Id, session);
     }
     
-    public void SaveCurrentSession(string? name = null)
+    public async Task SaveCurrentSession(string? name = null)
     {
-        SaveSession(CurrentSession, name);
+        await SaveSession(_currentSession, name);
     }
 
     public void CloseSession(int sessionId)
@@ -189,28 +184,29 @@ public class SessionService : ISessionService
         Console.WriteLine("Overwriting session!");
     }
 
-    public void SaveSession(int sessionId, string? name = null)
+    public async Task SaveSession(int sessionId, string? name = null)
     {
         if (!Exists(sessionId))
             return;
-        SaveSession(_sessionTable[sessionId]);
+        await SaveSession(_sessionTable[sessionId]);
     }
     
-    public void SaveSession(Session session, string? name = null)
+    public async Task SaveSession(Session session, string? name = null)
     {
         Console.WriteLine("Saving session!");
 
         Session newSession = session.Copy();
-        newSession.Title = name ?? Session.DEFAULT_NAME;
-        newSession.Created = DateTime.Now;
+        newSession.Title       = name ?? Session.DEFAULT_NAME;
+        newSession.Created     = DateTime.Now;
         newSession.SessionType = SessionType.Saved;
 
-        InsertSession(newSession);
+        await InsertSession(newSession);
     }
 
-    public void ImportSession(string fileContents)
+    public async Task ImportSession(string fileContents)
     {
         Console.WriteLine("Importing session!");
+        await Task.Delay(100);
     }
 
     #endregion
@@ -219,7 +215,7 @@ public class SessionService : ISessionService
     
     private bool Exists(int sessionId) => _sessionTable.ContainsKey(sessionId);
 
-    private void InsertSession(Session session)
+    private async Task InsertSession(Session session)
     {
         if (Exists(session.Id))
             return;
@@ -227,18 +223,18 @@ public class SessionService : ISessionService
         switch (session.SessionType)
         {
             case SessionType.Previous:
-                PreviousSessions.Add(session);
+                _previousSessions.Add(session);
                 break;
             case SessionType.Saved:
             case SessionType.Updated:
-                SavedSessions.Add(session);
+                _savedSessions.Add(session);
                 break;
             case SessionType.Current:
             default:
                 throw new InvalidEnumArgumentException();
         }
 
-        AddSession(session);
+        await AddSession(session);
         SessionsUpdated();
     }
 
@@ -258,10 +254,10 @@ public class SessionService : ISessionService
     {
         return type switch
         {
-            SessionType.Current  => new [] { CurrentSession },
-            SessionType.Previous => PreviousSessions,
-            SessionType.Saved    => SavedSessions,
-            SessionType.Updated  => SavedSessions,
+            SessionType.Current  => _currentSession.AsEnumerable(),
+            SessionType.Previous => _previousSessions,
+            SessionType.Saved    => _savedSessions,
+            SessionType.Updated  => _savedSessions,
             _                    => throw new InvalidEnumArgumentException($"Invalid session type '{type}'")
         };
     }
@@ -316,6 +312,16 @@ public class SessionService : ISessionService
             builder.AddAttribute(sequence: 6, nameof(SessionLayout.SessionType), value: session.SessionType);
             builder.CloseComponent();
         }
+    }
+
+    #endregion
+
+    #region IUpdateTrigger Implementation
+
+    public void SubscribeToUpdate(Action updateView)
+    {
+        SelectionChanged += _ => updateView();
+        SessionsUpdated  += updateView;
     }
 
     #endregion

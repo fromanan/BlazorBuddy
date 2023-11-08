@@ -37,7 +37,26 @@ public class ContextMenuService : IContextMenuService
 
     public T? GetMenu<T>(string id) => (T?) _ContextMenus[id];
 
-    public RenderFragment RegisterNewMenu(string id, MouseButtonTrigger trigger, string? cssClass = null, 
+    #endregion
+
+    #region Rendering
+    
+    public RenderFragment RenderContextMenu(string id)
+    {
+        return _ContextMenuFragments[id];
+    }
+    
+    public IEnumerable<RenderFragment> RenderContextMenus(params string[] ids)
+    {
+        return ids.Length <= 0 ? _ContextMenuFragments.Values : ids.Select(id => _ContextMenuFragments[id]);
+    }
+    
+    public IEnumerable<RenderFragment> RenderAllContextMenus()
+    {
+        return _ContextMenuFragments.Values;
+    }
+    
+    public RenderFragment RenderMenuHandler(string id, MouseButtonTrigger trigger, string? cssClass = null, 
         RenderFragment? childContent = null)
     {
         if (!_ContextMenuFragments.ContainsKey(id))
@@ -56,25 +75,6 @@ public class ContextMenuService : IContextMenuService
             builder.CloseComponent();
         }
     }
-
-    public RenderFragment RenderContextMenu(string id)
-    {
-        return _ContextMenuFragments[id];
-    }
-    
-    public IEnumerable<RenderFragment> RenderContextMenus(params string[] ids)
-    {
-        return ids.Length <= 0 ? _ContextMenuFragments.Values : ids.Select(id => _ContextMenuFragments[id]);
-    }
-    
-    public IEnumerable<RenderFragment> RenderAllContextMenus()
-    {
-        return _ContextMenuFragments.Values;
-    }
-
-    #endregion
-
-    #region Private Methods
 
     private static RenderFragment RenderMenu<T>(string id) where T : IComponent
     {

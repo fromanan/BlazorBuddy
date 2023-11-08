@@ -25,6 +25,7 @@ builder.Services.AddSingleton<ISessionService, SessionService>();
 builder.Services.AddDbContext<SessionContext>(contextLifetime: ServiceLifetime.Singleton, optionsAction: options =>
 {
    options.UseSqlite($"Data Source={DatabaseService.InitializeEnvironment(builder.Configuration)};");
+   options.EnableSensitiveDataLogging();
 });
 
 WebApplication app = builder.Build();

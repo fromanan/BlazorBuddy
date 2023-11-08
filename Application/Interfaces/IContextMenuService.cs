@@ -9,7 +9,7 @@ public interface IContextMenuService
 
     T? GetMenu<T>(string id);
 
-    RenderFragment RegisterNewMenu(string id, MouseButtonTrigger trigger, string? cssClass = null,
+    RenderFragment RenderMenuHandler(string id, MouseButtonTrigger trigger, string? cssClass = null,
         RenderFragment? childContent = null);
 
     RenderFragment RenderContextMenu(string id);

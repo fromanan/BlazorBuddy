@@ -14,6 +14,12 @@ public interface IDatabaseService
 
     void AddTab(Tab tab);
 
+    Task AddSessionAsync(Session session);
+
+    Task AddWindowAsync(Window window);
+
+    Task AddTabAsync(Tab tab);
+
     IEnumerable<Session> GetSessions();
 
     #endregion

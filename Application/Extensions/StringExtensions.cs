@@ -16,4 +16,9 @@ public static class StringExtensions
     {
         return !str.IsNullOrEmpty();
     }
+
+    public static string Format(this string str, params object?[] args)
+    {
+        return string.Format(str, args);
+    }
 }
