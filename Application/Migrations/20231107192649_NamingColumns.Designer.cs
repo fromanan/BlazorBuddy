@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Application.Migrations
 {
-    [DbContext(typeof(SessionContext))]
+    [DbContext(typeof(RootContext))]
     [Migration("20231107192649_NamingColumns")]
     partial class NamingColumns
     {

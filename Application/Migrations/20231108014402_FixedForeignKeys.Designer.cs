@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Application.Migrations
 {
-    [DbContext(typeof(SessionContext))]
+    [DbContext(typeof(RootContext))]
     [Migration("20231108014402_FixedForeignKeys")]
     partial class FixedForeignKeys
     {
