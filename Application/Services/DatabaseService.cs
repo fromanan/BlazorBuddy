@@ -98,6 +98,8 @@ public class DatabaseService : IDatabaseService, IDisposable, IAsyncDisposable
             throw new DatabaseException("Failed to load database path");
 
         string databasePath = string.Format(databasePathTemplate, FileSystem.Path.LocalAppData);
+        if (File.Exists(databasePath))
+            return databasePath;
         try
         {
             FileSystem.CreateDirectory(databasePath);
