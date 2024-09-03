@@ -26,9 +26,9 @@ public class SessionService : ISessionService
 
     public int SelectedSessionId { get; private set; }
 
-    public Session SelectedSession => _sessionTable.Count > 0 ? _sessionTable[SelectedSessionId] : DefaultSession;
+    public Session SelectedSession => _sessionTable.Count > 0 ? _sessionTable[SelectedSessionId] : _DefaultSession;
 
-    public static readonly Session DefaultSession = new()
+    private static readonly Session _DefaultSession = new()
     {
         Title = "Default",
         LastChange = DateTime.MinValue,
