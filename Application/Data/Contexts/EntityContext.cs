@@ -9,4 +9,13 @@ public class EntityContext : DbContext
     public EntityContext(DbContextOptions options) : base(options) { }
 
     #endregion
+    
+    #region Public Methods
+
+    public async Task Initialize()
+    {
+        await Database.MigrateAsync();
+    }
+    
+    #endregion
 }

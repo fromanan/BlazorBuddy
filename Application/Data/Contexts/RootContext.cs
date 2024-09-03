@@ -41,6 +41,10 @@ public class RootContext : DbContext
         TabContext = tabContext;
         
         await Database.MigrateAsync();
+        
+        await SessionContext.Initialize();
+        await WindowContext.Initialize();
+        await TabContext.Initialize();
     }
 
     private async Task<bool> Exists(string innerQuery)
