@@ -23,13 +23,6 @@ builder.Services.AddSingleton<ILayoutService, LayoutService>();
 builder.Services.AddSingleton<ISessionService, SessionService>();
 
 string databasePath = DatabaseService.InitializeEnvironment(builder.Configuration);
-
-void _OptionsSetup(DbContextOptionsBuilder options)
-{
-   options.UseSqlite($"Data Source={databasePath};");
-   options.EnableSensitiveDataLogging();
-}
-
 builder.Services.AddDbContext<RootContext>(contextLifetime: ServiceLifetime.Singleton, optionsAction: _OptionsSetup);
 builder.Services.AddDbContext<SessionContext>(contextLifetime: ServiceLifetime.Singleton, optionsAction: _OptionsSetup);
 builder.Services.AddDbContext<WindowContext>(contextLifetime: ServiceLifetime.Singleton, optionsAction: _OptionsSetup);
@@ -56,3 +49,11 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.Run();
+
+return;
+
+void _OptionsSetup(DbContextOptionsBuilder options)
+{
+   options.UseSqlite($"Data Source={databasePath};");
+   options.EnableSensitiveDataLogging();
+}
